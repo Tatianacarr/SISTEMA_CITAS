@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane
+        prefWidth="1000"
+        prefHeight="650"
+        stylesheets="@Styles.css"
+        fx:controller="com.proyecto.sistema_citas_poli.Controller.MedicoController"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1">
+
+
+    <VBox spacing="20"
+          alignment="CENTER"
+          AnchorPane.topAnchor="20"
+          AnchorPane.leftAnchor="30"
+          AnchorPane.rightAnchor="30">
+
+
+        <Label
+                text="👨‍⚕️ Panel del Médico"
+                styleClass="tituloPrincipal"/>
+
+
+
+        <HBox spacing="20">
+
+
+            <Label text="Médico:"/>
+
+            <Label fx:id="lblNombre"/>
+
+
+            <Label text="Especialidad:"/>
+
+            <Label fx:id="lblEspecialidad"/>
+
+
+        </HBox>
+
+
+
+
+
+        <TableView fx:id="tablaCitas"
+                   prefHeight="350">
+
+
+            <columns>
+
+
+                <TableColumn
+                        fx:id="colPaciente"
+                        text="Paciente"
+                        prefWidth="180"/>
+
+
+                <TableColumn
+                        fx:id="colEspecialidad"
+                        text="Especialidad"
+                        prefWidth="150"/>
+
+
+                <TableColumn
+                        fx:id="colFecha"
+                        text="Fecha"
+                        prefWidth="120"/>
+
+
+                <TableColumn
+                        fx:id="colHora"
+                        text="Hora"
+                        prefWidth="100"/>
+
+
+                <TableColumn
+                        fx:id="colEstado"
+                        text="Estado"
+                        prefWidth="120"/>
+
+
+            </columns>
+
+
+        </TableView>
+
+
+
+
+
+        <HBox spacing="20"
+              alignment="CENTER">
+
+
+            <Button
+                    fx:id="btnAtender"
+                    text="✅ Atender cita"
+                    onAction="#atenderCita"
+                    styleClass="botonPrincipal"/>
+
+
+
+            <Button
+                    fx:id="btnCancelar"
+                    text="❌ Cancelar cita"
+                    onAction="#cancelarCita"
+                    styleClass="botonSecundario"/>
+
+
+
+        </HBox>
+
+
+
+    </VBox>
+
+
+</AnchorPane>
