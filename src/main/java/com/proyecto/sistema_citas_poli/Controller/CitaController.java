@@ -20,11 +20,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
 import javafx.scene.Scene;
-
 import javafx.scene.control.*;
 
 import javafx.stage.Stage;
-
 
 import java.sql.Date;
 import java.sql.Time;
@@ -80,7 +78,6 @@ public class CitaController {
 
 
 
-
     private final MedicoDAO medicoDAO =
             new MedicoDAOImpl();
 
@@ -100,18 +97,8 @@ public class CitaController {
     public void initialize(){
 
 
-        cbEspecialidad.setItems(
-
-                FXCollections.observableArrayList(
-
-                        "Cardiología",
-                        "Pediatría",
-                        "Dermatología",
-                        "Medicina General"
-
-                )
-
-        );
+        // Cargar todos los médicos
+        cargarTodosLosMedicos();
 
 
 
@@ -133,7 +120,26 @@ public class CitaController {
 
 
 
-        cbEspecialidad.setOnAction(e -> cargarMedicos());
+        // Cuando selecciona médico muestra especialidad
+        cbMedico.setOnAction(e -> {
+
+
+            Medico medico =
+                    cbMedico.getValue();
+
+
+            if(medico != null){
+
+
+                cbEspecialidad.setValue(
+                        medico.getEspecialidad()
+                );
+
+
+            }
+
+
+        });
 
 
 
@@ -150,26 +156,12 @@ public class CitaController {
 
 
 
-    private void cargarMedicos(){
 
-
-        String especialidad =
-                cbEspecialidad.getValue();
-
-
-
-        if(especialidad == null){
-
-            return;
-
-        }
-
+    private void cargarTodosLosMedicos(){
 
 
         var medicos =
-                medicoDAO.buscarPorEspecialidad(
-                        especialidad
-                );
+                medicoDAO.leerTodos();
 
 
 
@@ -184,9 +176,8 @@ public class CitaController {
 
 
         System.out.println(
-                "Médicos cargados: "
-                        +
-                        medicos.size()
+                "Médicos encontrados: "
+                        + medicos.size()
         );
 
 
@@ -211,7 +202,6 @@ public class CitaController {
                     "Seleccione un médico"
             );
 
-
             return;
 
         }
@@ -225,7 +215,6 @@ public class CitaController {
                     "Error",
                     "Seleccione una fecha"
             );
-
 
             return;
 
@@ -241,13 +230,9 @@ public class CitaController {
                     "Seleccione una hora"
             );
 
-
             return;
 
         }
-
-
-
 
 
 
@@ -261,14 +246,13 @@ public class CitaController {
 
             alerta(
                     "Error",
-                    "No hay usuario activo"
+                    "No existe sesión activa"
             );
 
 
             return;
 
         }
-
 
 
 
@@ -296,14 +280,17 @@ public class CitaController {
 
                         medico.getEspecialidad(),
 
+
                         Date.valueOf(
                                 fecha.getValue()
                         ),
+
 
                         Time.valueOf(
                                 cbHora.getValue()
                                         +":00"
                         ),
+
 
                         "Pendiente"
 
@@ -314,19 +301,12 @@ public class CitaController {
 
 
 
-
-        boolean guardado =
-                citaDAO.agendar(cita);
-
-
-
-
-        if(guardado){
+        if(citaDAO.agendar(cita)){
 
 
             alerta(
                     "Correcto",
-                    "Cita guardada correctamente"
+                    "Cita agendada correctamente"
             );
 
 
@@ -355,16 +335,11 @@ public class CitaController {
 
 
 
-
     private void cargarCitas(){
 
 
-
-        if(!Sesion.existeSesion()){
-
+        if(!Sesion.existeSesion())
             return;
-
-        }
 
 
 
@@ -375,10 +350,8 @@ public class CitaController {
         lista.addAll(
 
                 citaDAO.listarPorUsuario(
-
                         Sesion.getPersona()
                                 .getId()
-
                 )
 
         );
@@ -410,10 +383,11 @@ public class CitaController {
 
         colMedico.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
-                                c.getValue().getMedico()
-                        )
+                c -> new javafx.beans.property.SimpleStringProperty(
+
+                        c.getValue().getMedico()
+
+                )
 
         );
 
@@ -421,10 +395,11 @@ public class CitaController {
 
         colEspecialidad.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
-                                c.getValue().getEspecialidad()
-                        )
+                c -> new javafx.beans.property.SimpleStringProperty(
+
+                        c.getValue().getEspecialidad()
+
+                )
 
         );
 
@@ -432,10 +407,11 @@ public class CitaController {
 
         colFecha.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleObjectProperty<>(
-                                c.getValue().getFecha()
-                        )
+                c -> new javafx.beans.property.SimpleObjectProperty<>(
+
+                        c.getValue().getFecha()
+
+                )
 
         );
 
@@ -443,10 +419,11 @@ public class CitaController {
 
         colHora.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleObjectProperty<>(
-                                c.getValue().getHora()
-                        )
+                c -> new javafx.beans.property.SimpleObjectProperty<>(
+
+                        c.getValue().getHora()
+
+                )
 
         );
 
@@ -454,16 +431,16 @@ public class CitaController {
 
         colEstado.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
-                                c.getValue().getEstado()
-                        )
+                c -> new javafx.beans.property.SimpleStringProperty(
+
+                        c.getValue().getEstado()
+
+                )
 
         );
 
 
     }
-
 
 
 
@@ -491,16 +468,13 @@ public class CitaController {
 
 
             Scene scene =
-                    new Scene(
-                            loader.load()
-                    );
+                    new Scene(loader.load());
 
 
 
             Stage stage =
                     (Stage)
-                            cbEspecialidad
-                                    .getScene()
+                            cbMedico.getScene()
                                     .getWindow();
 
 
@@ -524,8 +498,6 @@ public class CitaController {
 
 
 
-
-
     private void alerta(
             String titulo,
             String mensaje){
@@ -542,7 +514,6 @@ public class CitaController {
         alert.setHeaderText(null);
 
         alert.setContentText(mensaje);
-
 
         alert.showAndWait();
 

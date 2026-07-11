@@ -89,10 +89,57 @@ public class PacienteController {
         }
     }
     @FXML
-    public void misCitas() {
-        System.out.println(
-                "Aquí luego mostramos las citas del paciente"
-        );
+    public void misCitas(){
+
+
+        try{
+
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+
+                            getClass()
+                                    .getResource(
+                                            "/com/proyecto/sistema_citas_poli/mis_citas.fxml"
+                                    )
+
+                    );
+
+
+
+            Scene scene =
+                    new Scene(
+                            loader.load()
+                    );
+
+
+
+            Stage stage =
+                    (Stage)
+                            lblBienvenida
+                                    .getScene()
+                                    .getWindow();
+
+
+
+            stage.setScene(scene);
+
+
+            stage.setTitle(
+                    "Mis citas"
+            );
+
+
+
+        }catch(Exception e){
+
+
+            e.printStackTrace();
+
+
+        }
+
+
     }
     @FXML
     public void cerrarSesion(){
