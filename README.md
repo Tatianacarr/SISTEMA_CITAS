@@ -123,7 +123,8 @@ Sistema_Citas_Poli
 └── README.md
 ```
 
-## Autor
+## Autores
+Karen Lozano
 
 Angui Fierro
 
