@@ -201,7 +201,6 @@
                         text="🗑 Eliminar"
                         onAction="#eliminar"
                         styleClass="botonSecundario"/>
-
                 <Button
                         fx:id="btnActualizar"
                         text="🔄 Actualizar"
