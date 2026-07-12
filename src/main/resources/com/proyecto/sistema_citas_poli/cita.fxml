@@ -32,6 +32,8 @@
 
         <VBox
 
+                fx:id="formularioCita"
+
                 alignment="CENTER"
                 spacing="15"
 
@@ -49,7 +51,6 @@
             </padding>
 
 
-
             <Label
 
                     text="📅 Agendar cita"
@@ -57,14 +58,11 @@
                     styleClass="tituloLogin"/>
 
 
-
             <Label
 
                     text="Complete los datos de la cita"
 
                     styleClass="subtitulo"/>
-
-
 
 
 
@@ -80,8 +78,6 @@
 
 
 
-
-
             <ComboBox
 
                     fx:id="cbMedico"
@@ -91,8 +87,6 @@
                     prefWidth="280"
 
                     styleClass="campo"/>
-
-
 
 
 
@@ -108,9 +102,6 @@
 
 
 
-
-
-
             <ComboBox
 
                     fx:id="cbHora"
@@ -120,9 +111,6 @@
                     prefWidth="280"
 
                     styleClass="campo"/>
-
-
-
 
 
 
@@ -140,9 +128,6 @@
 
 
 
-
-
-
             <Button
 
                     text="✅ Guardar cita"
@@ -157,24 +142,86 @@
 
 
 
-
-
-            <Button
-
-                    text="⬅ Volver"
-
-                    prefWidth="280"
-
-                    prefHeight="40"
-
-                    onAction="#volver"
-
-                    styleClass="botonSecundario"/>
-
-
-
-
         </VBox>
+
+
+
+        <TableView
+
+                fx:id="tablaCitas"
+
+                prefWidth="750"
+
+                prefHeight="300">
+
+
+            <columns>
+
+
+                <TableColumn
+
+                        fx:id="colMedico"
+
+                        text="Médico"
+
+                        prefWidth="180"/>
+
+
+                <TableColumn
+
+                        fx:id="colEspecialidad"
+
+                        text="Especialidad"
+
+                        prefWidth="150"/>
+
+
+                <TableColumn
+
+                        fx:id="colFecha"
+
+                        text="Fecha"
+
+                        prefWidth="120"/>
+
+
+                <TableColumn
+
+                        fx:id="colHora"
+
+                        text="Hora"
+
+                        prefWidth="100"/>
+
+
+                <TableColumn
+
+                        fx:id="colEstado"
+
+                        text="Estado"
+
+                        prefWidth="120"/>
+
+
+            </columns>
+
+
+        </TableView>
+
+
+
+        <Button
+
+                text="⬅ Volver"
+
+                prefWidth="280"
+
+                prefHeight="40"
+
+                onAction="#volver"
+
+                styleClass="botonSecundario"/>
+
 
 
     </VBox>

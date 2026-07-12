@@ -26,9 +26,10 @@ public class CitaDAOImpl implements CitaDAO {
                     medico,
                     fecha,
                     hora,
-                    estado
+                    estado,
+                    observacion
                 )
-                VALUES(?,?,?,?,?,?,?)
+                VALUES(?,?,?,?,?,?,?,?)
                 """;
 
 
@@ -36,62 +37,32 @@ public class CitaDAOImpl implements CitaDAO {
             PreparedStatement ps = cn.prepareStatement(sql)){
 
 
+            ps.setInt(1,cita.getPacienteId());
 
-            ps.setInt(
-                    1,
-                    cita.getPacienteId()
-            );
+            ps.setInt(2,cita.getMedicoId());
 
+            ps.setString(3,cita.getEspecialidad());
 
-            ps.setInt(
-                    2,
-                    cita.getMedicoId()
-            );
+            ps.setString(4,cita.getMedico());
 
+            ps.setDate(5,cita.getFecha());
 
-            ps.setString(
-                    3,
-                    cita.getEspecialidad()
-            );
+            ps.setTime(6,cita.getHora());
+
+            ps.setString(7,cita.getEstado());
+
+            ps.setString(8,cita.getObservacion());
 
 
-            ps.setString(
-                    4,
-                    cita.getMedico()
-            );
-
-
-            ps.setDate(
-                    5,
-                    cita.getFecha()
-            );
-
-
-            ps.setTime(
-                    6,
-                    cita.getHora()
-            );
-
-
-            ps.setString(
-                    7,
-                    cita.getEstado()
-            );
-
-
-
-            return ps.executeUpdate() > 0;
-
+            return ps.executeUpdate()>0;
 
 
         }catch(SQLException e){
 
-
             System.out.println(
                     "Error agendando cita: "
-                            + e.getMessage()
+                            +e.getMessage()
             );
-
 
             return false;
 
@@ -106,66 +77,58 @@ public class CitaDAOImpl implements CitaDAO {
 
 
 
-
-
     @Override
     public List<Cita> listarPorUsuario(int usuarioId){
 
 
-
-        List<Cita> lista =
-                new ArrayList<>();
-
+        List<Cita> lista = new ArrayList<>();
 
 
         String sql = """
-                SELECT *
-                FROM citas
-                WHERE usuario_id=?
-                ORDER BY fecha,hora
-                """;
+
+        SELECT 
+        c.*,
+        u.nombre || ' ' || u.apellido AS paciente_nombre
+
+        FROM citas c
+
+        INNER JOIN usuario u
+
+        ON c.usuario_id=u.id
+
+        WHERE c.usuario_id=?
+
+        ORDER BY c.fecha,c.hora
+
+        """;
 
 
 
-        try(Connection cn = Conexion.getConexion();
-
-            PreparedStatement ps =
-                    cn.prepareStatement(sql)){
-
+        try(Connection cn=Conexion.getConexion();
+            PreparedStatement ps=cn.prepareStatement(sql)){
 
 
             ps.setInt(1,usuarioId);
 
 
-
-            ResultSet rs =
-                    ps.executeQuery();
-
+            ResultSet rs=ps.executeQuery();
 
 
             while(rs.next()){
 
-
-                lista.add(
-                        mapearCita(rs)
-                );
-
+                lista.add(mapearCita(rs));
 
             }
 
 
-
         }catch(SQLException e){
 
-
             System.out.println(
-                    "Error listando citas usuario: "
-                            + e.getMessage()
+                    "Error listando usuario: "
+                            +e.getMessage()
             );
 
-
         }
-
 
 
         return lista;
@@ -180,56 +143,51 @@ public class CitaDAOImpl implements CitaDAO {
 
 
 
+
     @Override
     public List<Cita> listarTodas(){
 
 
-
-        List<Cita> lista =
-                new ArrayList<>();
-
+        List<Cita> lista=new ArrayList<>();
 
 
         String sql = """
-                SELECT *
-                FROM citas
-                ORDER BY fecha,hora
-                """;
+
+        SELECT 
+        c.*,
+        u.nombre || ' ' || u.apellido AS paciente_nombre
+
+        FROM citas c
+
+        INNER JOIN usuario u
+
+        ON c.usuario_id=u.id
+
+        ORDER BY c.fecha,c.hora
+
+        """;
 
 
-
-        try(Connection cn = Conexion.getConexion();
-
-            Statement st =
-                    cn.createStatement();
-
-            ResultSet rs =
-                    st.executeQuery(sql)){
-
+        try(Connection cn=Conexion.getConexion();
+            Statement st=cn.createStatement();
+            ResultSet rs=st.executeQuery(sql)){
 
 
             while(rs.next()){
 
-
-                lista.add(
-                        mapearCita(rs)
-                );
-
+                lista.add(mapearCita(rs));
 
             }
 
 
-
         }catch(SQLException e){
-
 
             System.out.println(
                     "Error listando citas: "
-                            + e.getMessage()
+                            +e.getMessage()
             );
 
         }
-
 
 
         return lista;
@@ -248,60 +206,57 @@ public class CitaDAOImpl implements CitaDAO {
     public List<Cita> listarPorMedico(int medicoId){
 
 
-
-        List<Cita> lista =
-                new ArrayList<>();
-
+        List<Cita> lista=new ArrayList<>();
 
 
         String sql = """
-                SELECT *
-                FROM citas
-                WHERE medico_id=?
-                ORDER BY fecha,hora
-                """;
+
+        SELECT 
+        c.*,
+        u.nombre || ' ' || u.apellido AS paciente_nombre
+
+        FROM citas c
+
+        INNER JOIN usuario u
+
+        ON c.usuario_id=u.id
+
+        WHERE c.medico_id=?
+
+        ORDER BY c.fecha,c.hora
+
+        """;
 
 
 
-        try(Connection cn = Conexion.getConexion();
-
-            PreparedStatement ps =
-                    cn.prepareStatement(sql)){
-
+        try(Connection cn=Conexion.getConexion();
+            PreparedStatement ps=cn.prepareStatement(sql)){
 
 
             ps.setInt(1,medicoId);
 
 
-
-            ResultSet rs =
-                    ps.executeQuery();
+            ResultSet rs=ps.executeQuery();
 
 
 
             while(rs.next()){
 
 
-                lista.add(
-                        mapearCita(rs)
-                );
+                lista.add(mapearCita(rs));
 
 
             }
 
 
-
         }catch(SQLException e){
-
 
             System.out.println(
                     "Error citas medico: "
                             +e.getMessage()
             );
 
-
         }
-
 
 
         return lista;
@@ -323,43 +278,36 @@ public class CitaDAOImpl implements CitaDAO {
 
 
 
-        String sql = """
-                UPDATE citas
-                SET estado=?
-                WHERE id=?
-                """;
+        String sql="""
+
+        UPDATE citas
+
+        SET estado=?
+
+        WHERE id=?
+
+        """;
 
 
 
-        try(Connection cn = Conexion.getConexion();
-
-            PreparedStatement ps =
-                    cn.prepareStatement(sql)){
+        try(Connection cn=Conexion.getConexion();
+            PreparedStatement ps=cn.prepareStatement(sql)){
 
 
 
-            ps.setString(
-                    1,
-                    nuevoEstado
-            );
+            ps.setString(1,nuevoEstado);
 
-
-            ps.setInt(
-                    2,
-                    idCita
-            );
+            ps.setInt(2,idCita);
 
 
 
-            return ps.executeUpdate() > 0;
-
+            return ps.executeUpdate()>0;
 
 
         }catch(SQLException e){
 
-
             System.out.println(
-                    "Error actualizando cita: "
+                    "Error estado cita: "
                             +e.getMessage()
             );
 
@@ -383,28 +331,26 @@ public class CitaDAOImpl implements CitaDAO {
 
 
 
-        String sql = """
-                DELETE FROM citas
-                WHERE id=?
-                """;
+        String sql="""
+
+        DELETE FROM citas
+
+        WHERE id=?
+
+        """;
 
 
 
-        try(Connection cn = Conexion.getConexion();
-
-            PreparedStatement ps =
-                    cn.prepareStatement(sql)){
+        try(Connection cn=Conexion.getConexion();
+            PreparedStatement ps=cn.prepareStatement(sql)){
 
 
 
-            ps.setInt(
-                    1,
-                    idCita
-            );
+            ps.setInt(1,idCita);
 
 
 
-            return ps.executeUpdate() > 0;
+            return ps.executeUpdate()>0;
 
 
 
@@ -412,7 +358,7 @@ public class CitaDAOImpl implements CitaDAO {
 
 
             System.out.println(
-                    "Error eliminando cita: "
+                    "Error eliminar cita: "
                             +e.getMessage()
             );
 
@@ -431,9 +377,70 @@ public class CitaDAOImpl implements CitaDAO {
 
 
 
+    @Override
+    public boolean actualizar(Cita cita){
+
+
+        String sql="""
+
+        UPDATE citas
+
+        SET fecha=?,
+            hora=?,
+            observacion=?,
+            estado=?
+
+        WHERE id=?
+
+        """;
+
+
+
+        try(Connection cn=Conexion.getConexion();
+            PreparedStatement ps=cn.prepareStatement(sql)){
+
+
+
+            ps.setDate(1,cita.getFecha());
+
+            ps.setTime(2,cita.getHora());
+
+            ps.setString(3,cita.getObservacion());
+
+            ps.setString(4,cita.getEstado());
+
+            ps.setInt(5,cita.getId());
+
+
+
+            return ps.executeUpdate()>0;
+
+
+
+        }catch(SQLException e){
+
+
+            System.out.println(
+                    "Error actualizar cita: "
+                            +e.getMessage()
+            );
+
+
+            return false;
+
+        }
+
+
+    }
+
+
+
+
+
+
+
     private Cita mapearCita(ResultSet rs)
             throws SQLException {
-
 
 
         return new Cita(
@@ -444,18 +451,31 @@ public class CitaDAOImpl implements CitaDAO {
 
                 rs.getInt("medico_id"),
 
+
+                // PACIENTE REAL
+                rs.getString("paciente_nombre"),
+
+
+                // MEDICO
                 rs.getString("medico"),
 
+
+                // ESPECIALIDAD
                 rs.getString("especialidad"),
+
 
                 rs.getDate("fecha"),
 
+
                 rs.getTime("hora"),
 
-                rs.getString("estado")
+
+                rs.getString("estado"),
+
+
+                rs.getString("observacion")
 
         );
-
 
     }
 

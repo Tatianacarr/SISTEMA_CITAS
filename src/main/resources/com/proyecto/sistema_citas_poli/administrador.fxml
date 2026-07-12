@@ -12,7 +12,10 @@
         prefWidth="1200"
         prefHeight="700">
 
+    <!-- ================= CABECERA ================= -->
+
     <top>
+
         <HBox alignment="CENTER_LEFT"
               spacing="15"
               styleClass="panelInformacion">
@@ -33,6 +36,7 @@
                     styleClass="textoInfo"/>
 
         </HBox>
+
     </top>
 
     <!-- ================= MENÚ ================= -->
@@ -44,7 +48,10 @@
               styleClass="panelInformacion">
 
             <padding>
-                <Insets top="20" left="15" right="15" bottom="20"/>
+                <Insets top="20"
+                        right="15"
+                        bottom="20"
+                        left="15"/>
             </padding>
 
             <Button
@@ -102,7 +109,10 @@
         <VBox spacing="15">
 
             <padding>
-                <Insets top="20" left="20" right="20" bottom="20"/>
+                <Insets top="20"
+                        right="20"
+                        bottom="20"
+                        left="20"/>
             </padding>
 
             <Label
@@ -114,42 +124,58 @@
 
                 <TextField
                         fx:id="txtBuscar"
-                        promptText="Buscar..."
+                        promptText="🔍 Buscar por nombre, apellido, correo o rol..."
                         HBox.hgrow="ALWAYS"
                         styleClass="campo"/>
 
                 <Button
                         fx:id="btnBuscar"
-                        text="🔍 Buscar"
+                        text="Buscar"
                         onAction="#buscar"
                         styleClass="botonPrincipal"/>
 
             </HBox>
 
-            <TableView fx:id="tablaDatos"
-                       VBox.vgrow="ALWAYS">
+            <TableView
+                    fx:id="tablaDatos"
+                    VBox.vgrow="ALWAYS">
 
                 <columns>
 
                     <TableColumn
-                            fx:id="col1"
+                            fx:id="colId"
                             text="ID"
-                            prefWidth="80"/>
+                            prefWidth="60"/>
 
                     <TableColumn
-                            fx:id="col2"
+                            fx:id="colNombre"
                             text="Nombre"
-                            prefWidth="170"/>
+                            prefWidth="130"/>
 
                     <TableColumn
-                            fx:id="col3"
-                            text="Información"
-                            prefWidth="250"/>
+                            fx:id="colApellido"
+                            text="Apellido"
+                            prefWidth="130"/>
 
                     <TableColumn
-                            fx:id="col4"
+                            fx:id="colCorreo"
+                            text="Correo"
+                            prefWidth="230"/>
+
+                    <TableColumn
+                            fx:id="colRol"
+                            text="Rol"
+                            prefWidth="120"/>
+
+                    <TableColumn
+                            fx:id="colTelefono"
+                            text="Teléfono"
+                            prefWidth="140"/>
+
+                    <TableColumn
+                            fx:id="colEstado"
                             text="Estado"
-                            prefWidth="150"/>
+                            prefWidth="100"/>
 
                 </columns>
 

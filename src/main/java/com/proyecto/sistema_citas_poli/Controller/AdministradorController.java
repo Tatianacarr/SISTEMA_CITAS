@@ -3,38 +3,41 @@ package com.proyecto.sistema_citas_poli.Controller;
 
 import com.proyecto.sistema_citas_poli.DAO.PersonaDAO;
 import com.proyecto.sistema_citas_poli.DAO.PersonaDAOImpl;
-
 import com.proyecto.sistema_citas_poli.Model.Persona;
-import com.proyecto.sistema_citas_poli.Model.Administrador;
-import com.proyecto.sistema_citas_poli.Model.Medico;
-import com.proyecto.sistema_citas_poli.Model.Paciente;
-
 import com.proyecto.sistema_citas_poli.Util.Sesion;
 
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+
+
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+
 
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import javafx.scene.layout.VBox;
 
 import javafx.stage.Stage;
 
-import java.util.Optional;
+
+import java.util.List;
 
 
 
 public class AdministradorController {
 
 
-
-    // ============================
-    // COMPONENTES FXML
-    // ============================
+    //==============================
+    // FXML
+    //==============================
 
 
     @FXML
@@ -45,81 +48,112 @@ public class AdministradorController {
     private Label lblTitulo;
 
 
-
     @FXML
     private TextField txtBuscar;
 
 
 
     @FXML
-    private TableView<Object> tablaDatos;
+    private TableView<Persona> tablaDatos;
 
 
 
     @FXML
-    private TableColumn<Object,Object> col1;
+    private TableColumn<Persona,Integer> colId;
 
 
     @FXML
-    private TableColumn<Object,Object> col2;
+    private TableColumn<Persona,String> colNombre;
 
 
     @FXML
-    private TableColumn<Object,Object> col3;
+    private TableColumn<Persona,String> colApellido;
 
 
     @FXML
-    private TableColumn<Object,Object> col4;
-
+    private TableColumn<Persona,String> colCorreo;
 
 
     @FXML
-    private Button btnCerrarSesion;
+    private TableColumn<Persona,String> colRol;
+
+
+    @FXML
+    private TableColumn<Persona,String> colTelefono;
+
+
+    @FXML
+    private TableColumn<Persona,Boolean> colEstado;
 
 
 
 
-    // ============================
-    // DATOS
-    // ============================
+    //==============================
+    // DAO
+    //==============================
 
 
-    private ObservableList<Object> datos =
-            FXCollections.observableArrayList();
-
-
-
-    private String moduloActual="Inicio";
-
-
-    private PersonaDAO personaDAO =
+    private final PersonaDAO personaDAO =
             new PersonaDAOImpl();
 
 
 
+    private final ObservableList<Persona> lista =
+            FXCollections.observableArrayList();
 
 
-    // ============================
-    // INICIALIZAR
-    // ============================
+
+    private Persona personaSeleccionada;
+
+
+
+    //==============================
+    // INICIO
+    //==============================
 
 
     @FXML
     public void initialize(){
 
 
+        cargarAdministrador();
+
+
         configurarTabla();
 
 
+        cargarUsuarios();
 
-        if(Sesion.getPersona()!=null){
+
+
+        tablaDatos.setOnMouseClicked(event -> {
+
+            seleccionarUsuario();
+
+        });
+
+
+    }
+
+
+
+
+
+    private void cargarAdministrador(){
+
+
+        if(Sesion.existeSesion()){
+
+
+            Persona admin =
+                    Sesion.getPersona();
 
 
             lblAdministrador.setText(
 
-                    "Administrador: "
-                            +
-                            Sesion.getPersona().getNombre()
+                    admin.getNombre()
+                            +" "
+                            +admin.getApellido()
 
             );
 
@@ -127,165 +161,55 @@ public class AdministradorController {
         }
 
 
-
-        mostrarInicio();
-
-
     }
 
 
 
 
+    //==============================
+    // TABLA
+    //==============================
 
 
     private void configurarTabla(){
 
 
-        col1.setCellValueFactory(
+        colId.setCellValueFactory(
                 new PropertyValueFactory<>("id")
         );
 
 
-        col2.setCellValueFactory(
+        colNombre.setCellValueFactory(
                 new PropertyValueFactory<>("nombre")
         );
 
 
-        col3.setCellValueFactory(
+        colApellido.setCellValueFactory(
+                new PropertyValueFactory<>("apellido")
+        );
+
+
+        colCorreo.setCellValueFactory(
                 new PropertyValueFactory<>("correo")
         );
 
 
-        col4.setCellValueFactory(
+        colRol.setCellValueFactory(
+                new PropertyValueFactory<>("rol")
+        );
+
+
+        colTelefono.setCellValueFactory(
+                new PropertyValueFactory<>("telefono")
+        );
+
+
+        colEstado.setCellValueFactory(
                 new PropertyValueFactory<>("activo")
         );
 
 
-
-        tablaDatos.setItems(datos);
-
-
-
     }
-
-
-
-
-
-
-    // ============================
-    // MENU
-    // ============================
-
-
-
-    @FXML
-    public void mostrarInicio(){
-
-
-        moduloActual="Inicio";
-
-
-        lblTitulo.setText(
-                "Panel principal de administración"
-        );
-
-
-        datos.clear();
-
-
-
-    }
-
-
-
-
-
-    @FXML
-    public void mostrarUsuarios(){
-
-
-        moduloActual="Usuarios";
-
-
-        lblTitulo.setText(
-                "Gestión de Usuarios"
-        );
-
-
-        cargarUsuarios();
-
-
-
-    }
-
-
-
-
-
-
-    @FXML
-    public void mostrarMedicos(){
-
-
-        moduloActual="Medicos";
-
-
-        lblTitulo.setText(
-                "Gestión de Médicos"
-        );
-
-
-        cargarUsuarios();
-
-
-    }
-
-
-
-
-
-
-    @FXML
-    public void mostrarPacientes(){
-
-
-        moduloActual="Pacientes";
-
-
-        lblTitulo.setText(
-                "Gestión de Pacientes"
-        );
-
-
-        cargarUsuarios();
-
-
-
-    }
-
-
-
-
-
-
-    @FXML
-    public void mostrarCitas(){
-
-
-        moduloActual="Citas";
-
-
-        lblTitulo.setText(
-                "Gestión de Citas"
-        );
-
-
-        datos.clear();
-
-
-    }
-
 
 
 
@@ -293,35 +217,74 @@ public class AdministradorController {
     private void cargarUsuarios(){
 
 
-        datos.clear();
+        lista.clear();
 
 
-
-        datos.addAll(
+        lista.addAll(
                 personaDAO.listarTodos()
         );
 
 
-
-        tablaDatos.refresh();
-
+        tablaDatos.setItems(lista);
 
 
     }
-    // ============================
+
+
+
+
+
+    //==============================
+    // MENU
+    //==============================
+
+
+    @FXML
+    public void mostrarInicio(){
+
+        lblTitulo.setText(
+                "Panel de Administración"
+        );
+
+        cargarUsuarios();
+
+    }
+
+
+
+
+    @FXML
+    public void mostrarUsuarios(){
+
+        lblTitulo.setText(
+                "Usuarios Registrados"
+        );
+
+        cargarUsuarios();
+
+    }
+
+
+
+
+
+    //==============================
     // BUSCAR
-    // ============================
+    //==============================
 
 
     @FXML
     public void buscar(){
 
 
-        String texto = txtBuscar.getText();
+        String texto =
+                txtBuscar.getText()
+                        .trim();
 
 
 
         if(texto.isEmpty()){
+
 
             cargarUsuarios();
 
@@ -331,17 +294,49 @@ public class AdministradorController {
 
 
 
-        datos.clear();
+        lista.clear();
 
 
 
-        datos.addAll(
-                personaDAO.buscar(texto)
-        );
+        try{
+
+
+            int id =
+                    Integer.parseInt(texto);
 
 
 
-        tablaDatos.refresh();
+            Persona persona =
+                    personaDAO.buscarPorId(id);
+
+
+
+            if(persona != null){
+
+                lista.add(persona);
+
+            }
+
+
+
+        }catch(NumberFormatException e){
+
+
+
+            List<Persona> resultado =
+                    personaDAO.buscar(texto);
+
+
+
+            lista.addAll(resultado);
+
+
+        }
+
+
+
+        tablaDatos.setItems(lista);
+
 
 
     }
@@ -351,31 +346,38 @@ public class AdministradorController {
 
 
 
-    // ============================
-    // NUEVO REGISTRO
-    // ============================
+    //==============================
+    // SELECCIONAR
+    //==============================
+
+
+    private void seleccionarUsuario(){
+
+
+        personaSeleccionada =
+
+                tablaDatos
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+    }
+
+
+
+
+
+
+    //==============================
+    // NUEVO
+    //==============================
 
 
     @FXML
     public void nuevo(){
 
 
-        if(moduloActual.equals("Inicio")){
-
-
-            mostrarMensaje(
-                    "Seleccione Usuarios primero"
-            );
-
-
-            return;
-
-        }
-
-
-
-        crearRegistro();
-
+        abrirRegistro(null);
 
 
     }
@@ -385,379 +387,20 @@ public class AdministradorController {
 
 
 
-
-    private void crearRegistro(){
-
-
-
-        Dialog<ButtonType> dialog =
-                new Dialog<>();
-
-
-        dialog.setTitle(
-                "Nuevo Registro"
-        );
-
-
-
-        VBox formulario =
-                new VBox(10);
-
-
-
-        TextField nombre =
-                new TextField();
-
-        nombre.setPromptText(
-                "Nombre"
-        );
-
-
-
-        TextField apellido =
-                new TextField();
-
-        apellido.setPromptText(
-                "Apellido"
-        );
-
-
-
-        TextField correo =
-                new TextField();
-
-        correo.setPromptText(
-                "Correo"
-        );
-
-
-
-        PasswordField contrasena =
-                new PasswordField();
-
-        contrasena.setPromptText(
-                "Contraseña"
-        );
-
-
-
-        TextField telefono =
-                new TextField();
-
-        telefono.setPromptText(
-                "Teléfono"
-        );
-
-
-
-        ComboBox<String> rol =
-                new ComboBox<>();
-
-
-        rol.getItems().addAll(
-
-                "ADMINISTRADOR",
-                "MEDICO",
-                "PACIENTE"
-
-        );
-
-
-        rol.setValue(
-                "PACIENTE"
-        );
-
-
-
-        TextField informacion =
-                new TextField();
-
-
-        informacion.setPromptText(
-
-                "Especialidad (Médico) / Historial (Paciente)"
-
-        );
-
-
-
-
-
-        formulario.getChildren().addAll(
-
-                nombre,
-                apellido,
-                correo,
-                contrasena,
-                telefono,
-                rol,
-                informacion
-
-        );
-
-
-
-
-
-        dialog.getDialogPane()
-                .setContent(
-                        formulario
-                );
-
-
-
-
-        dialog.getDialogPane()
-                .getButtonTypes()
-                .addAll(
-
-                        ButtonType.OK,
-                        ButtonType.CANCEL
-
-                );
-
-
-
-
-
-        Optional<ButtonType> resultado =
-
-                dialog.showAndWait();
-
-
-
-
-
-        if(resultado.isPresent()
-
-                &&
-
-                resultado.get()==ButtonType.OK){
-
-
-
-
-
-            if(nombre.getText().isEmpty()
-
-                    ||
-
-                    apellido.getText().isEmpty()
-
-                    ||
-
-                    correo.getText().isEmpty()
-
-                    ||
-
-                    contrasena.getText().isEmpty()){
-
-
-
-                mostrarMensaje(
-                        "Complete los campos obligatorios"
-                );
-
-
-                return;
-
-
-            }
-
-
-
-
-
-
-
-            Persona persona;
-
-
-
-            switch(rol.getValue()){
-
-
-
-
-
-
-                case "ADMINISTRADOR":
-
-
-
-                    persona =
-                            new Administrador(
-
-                                    0,
-
-                                    nombre.getText(),
-
-                                    apellido.getText(),
-
-                                    correo.getText(),
-
-                                    contrasena.getText(),
-
-                                    "ADMINISTRADOR",
-
-                                    telefono.getText(),
-
-                                    true
-
-                            );
-
-                    break;
-
-
-
-
-
-
-
-                case "MEDICO":
-
-
-
-                    persona =
-                            new Medico(
-
-                                    0,
-
-                                    nombre.getText(),
-
-                                    apellido.getText(),
-
-                                    correo.getText(),
-
-                                    contrasena.getText(),
-
-                                    "MEDICO",
-
-                                    telefono.getText(),
-
-                                    true,
-
-                                    0,
-
-                                    informacion.getText()
-
-                            );
-
-
-
-                    break;
-
-
-
-
-
-
-
-                default:
-
-
-
-
-                    persona =
-                            new Paciente(
-
-                                    0,
-
-                                    nombre.getText(),
-
-                                    apellido.getText(),
-
-                                    correo.getText(),
-
-                                    contrasena.getText(),
-
-                                    "PACIENTE",
-
-                                    telefono.getText(),
-
-                                    true,
-
-                                    informacion.getText()
-
-                            );
-
-
-
-                    break;
-
-
-            }
-
-
-
-
-
-            boolean creado =
-                    personaDAO.crear(persona);
-
-
-
-
-
-
-            if(creado){
-
-
-
-                mostrarMensaje(
-
-                        "Registro creado correctamente"
-
-                );
-
-
-
-                cargarUsuarios();
-
-
-
-            }else{
-
-
-                mostrarMensaje(
-
-                        "Error al guardar registro"
-
-                );
-
-
-            }
-
-
-
-
-
-        }
-
-
-
-    }
-    // ============================
+    //==============================
     // EDITAR
-    // ============================
+    //==============================
 
 
     @FXML
     public void editar(){
 
 
-        Object seleccionado =
-                tablaDatos
-                        .getSelectionModel()
-                        .getSelectedItem();
+        if(personaSeleccionada == null){
 
 
-
-        if(seleccionado == null){
-
-
-            mostrarMensaje(
-                    "Seleccione un registro primero"
+            alerta(
+                    "Seleccione un usuario para editar"
             );
 
 
@@ -767,45 +410,9 @@ public class AdministradorController {
 
 
 
-        if(seleccionado instanceof Persona){
-
-
-            Persona persona =
-                    (Persona) seleccionado;
-
-
-
-            boolean actualizado =
-                    personaDAO.actualizar(persona);
-
-
-
-            if(actualizado){
-
-
-                mostrarMensaje(
-                        "Registro actualizado correctamente"
-                );
-
-
-                cargarUsuarios();
-
-
-
-            }else{
-
-
-                mostrarMensaje(
-                        "No se pudo actualizar"
-                );
-
-
-            }
-
-
-
-        }
-
+        abrirRegistro(
+                personaSeleccionada
+        );
 
 
     }
@@ -814,132 +421,39 @@ public class AdministradorController {
 
 
 
+    private void abrirRegistro(Persona persona){
 
 
-    // ============================
-    // ELIMINAR
-    // ============================
+        try{
 
 
-    @FXML
-    public void eliminar(){
+            FXMLLoader loader =
+                    new FXMLLoader(
 
+                            getClass()
+                                    .getResource(
+                                            "/com/proyecto/sistema_citas_poli/registro.fxml"
+                                    )
 
-
-        Object seleccionado =
-                tablaDatos
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-
-
-
-        if(seleccionado == null){
-
-
-
-            mostrarMensaje(
-                    "Seleccione un registro"
-            );
-
-
-            return;
-
-        }
-
-
-
-
-
-
-        Persona persona =
-                (Persona) seleccionado;
-
-
-
-
-
-        Alert confirmar =
-                new Alert(
-                        Alert.AlertType.CONFIRMATION
-                );
-
-
-
-        confirmar.setTitle(
-                "Eliminar"
-        );
-
-
-
-        confirmar.setHeaderText(
-                null
-        );
-
-
-
-        confirmar.setContentText(
-
-                "¿Desea eliminar este registro?"
-
-        );
-
-
-
-
-
-        Optional<ButtonType> respuesta =
-
-                confirmar.showAndWait();
-
-
-
-
-
-
-        if(respuesta.isPresent()
-
-                &&
-
-                respuesta.get()==ButtonType.OK){
-
-
-
-
-
-            boolean eliminado =
-
-                    personaDAO.eliminar(
-                            persona.getId()
                     );
 
 
 
+            Parent root =
+                    loader.load();
 
 
 
-            if(eliminado){
+            RegistroController controller =
+                    loader.getController();
 
 
 
-                mostrarMensaje(
-
-                        "Registro eliminado correctamente"
-
-                );
+            if(persona != null){
 
 
-                cargarUsuarios();
-
-
-
-            }else{
-
-
-                mostrarMensaje(
-
-                        "No se pudo eliminar"
-
+                controller.cargarUsuario(
+                        persona
                 );
 
 
@@ -948,10 +462,39 @@ public class AdministradorController {
 
 
 
+            Stage stage =
+                    new Stage();
+
+
+
+            stage.setTitle(
+                    "Registro Usuario"
+            );
+
+
+
+            stage.setScene(
+                    new Scene(root)
+            );
+
+
+
+            stage.show();
+
+
+
+        }catch(Exception e){
+
+
+            e.printStackTrace();
+
+
+            alerta(
+                    "Error abriendo registro"
+            );
+
 
         }
-
-
 
 
     }
@@ -962,9 +505,9 @@ public class AdministradorController {
 
 
 
-    // ============================
-    // ACTUALIZAR TABLA
-    // ============================
+    //==============================
+    // ACTUALIZAR
+    //==============================
 
 
     @FXML
@@ -974,11 +517,8 @@ public class AdministradorController {
         cargarUsuarios();
 
 
-
-        mostrarMensaje(
-
-                "Datos actualizados"
-
+        alerta(
+                "Tabla actualizada"
         );
 
 
@@ -989,10 +529,188 @@ public class AdministradorController {
 
 
 
+    //==============================
+    // ELIMINAR
+    //==============================
 
-    // ============================
-    // CERRAR SESIÓN
-    // ============================
+
+    @FXML
+    public void eliminar(){
+
+
+        if(personaSeleccionada == null){
+
+
+            alerta(
+                    "Seleccione un usuario"
+            );
+
+
+            return;
+
+        }
+
+
+
+
+        boolean eliminado =
+
+                personaDAO.eliminar(
+
+                        personaSeleccionada.getId()
+
+                );
+
+
+
+        if(eliminado){
+
+
+            alerta(
+                    "Usuario eliminado correctamente"
+            );
+
+
+            cargarUsuarios();
+
+
+
+        }else{
+
+
+            alerta(
+                    "No se pudo eliminar"
+            );
+
+
+        }
+
+
+    }
+
+
+
+
+
+    //==============================
+    // FILTROS
+    //==============================
+
+
+    @FXML
+    public void mostrarMedicos(){
+
+
+        lista.clear();
+
+
+
+        for(Persona p:
+                personaDAO.listarTodos()){
+
+
+            if(p.getRol()
+                    .equalsIgnoreCase("MEDICO")){
+
+
+                lista.add(p);
+
+
+            }
+
+
+        }
+
+
+        tablaDatos.setItems(lista);
+
+
+        lblTitulo.setText(
+                "Médicos"
+        );
+
+
+    }
+
+
+
+
+
+    @FXML
+    public void mostrarPacientes(){
+
+
+        lista.clear();
+
+
+
+        for(Persona p:
+                personaDAO.listarTodos()){
+
+
+            if(p.getRol()
+                    .equalsIgnoreCase("PACIENTE")){
+
+
+                lista.add(p);
+
+
+            }
+
+
+        }
+
+
+        tablaDatos.setItems(lista);
+
+
+        lblTitulo.setText(
+                "Pacientes"
+        );
+
+
+    }
+    @FXML
+    public void mostrarCitas(ActionEvent event){
+
+        try{
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/com/proyecto/sistema_citas_poli/cita.fxml"
+                    )
+            );
+
+
+            Scene scene = new Scene(loader.load());
+
+
+            Stage stage = (Stage)
+                    ((Node) event.getSource())
+                            .getScene()
+                            .getWindow();
+
+
+            stage.setScene(scene);
+            stage.show();
+
+
+        }catch(Exception e){
+
+            e.printStackTrace();
+
+            alerta(
+                    "No se pudo abrir el módulo de citas"
+            );
+
+        }
+
+    }
+
+
+    //==============================
+    // SESION
+    //==============================
 
 
     @FXML
@@ -1002,17 +720,9 @@ public class AdministradorController {
         Sesion.cerrarSesion();
 
 
-
-        Stage ventana =
-
-                (Stage)
-                        btnCerrarSesion
-                                .getScene()
-                                .getWindow();
-
-
-
-        ventana.close();
+        alerta(
+                "Sesión cerrada"
+        );
 
 
     }
@@ -1022,45 +732,27 @@ public class AdministradorController {
 
 
 
+    private void alerta(String mensaje){
 
 
-    // ============================
-    // MENSAJES
-    // ============================
-
-
-    private void mostrarMensaje(
-            String mensaje
-    ){
-
-
-
-        Alert alerta =
-
+        Alert alert =
                 new Alert(
                         Alert.AlertType.INFORMATION
                 );
 
 
-
-        alerta.setTitle(
-                "Sistema"
+        alert.setTitle(
+                "MediCitas POLI"
         );
 
 
-        alerta.setHeaderText(
-                null
-        );
+        alert.setHeaderText(null);
 
 
-        alerta.setContentText(
-                mensaje
-        );
+        alert.setContentText(mensaje);
 
 
-
-        alerta.showAndWait();
-
+        alert.showAndWait();
 
 
     }

@@ -8,13 +8,17 @@ import com.proyecto.sistema_citas_poli.Model.Medico;
 import com.proyecto.sistema_citas_poli.Util.Sesion;
 
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import javafx.stage.Stage;
 
 
 
@@ -24,7 +28,6 @@ public class MedicoController {
 
     @FXML
     private Label lblNombre;
-
 
 
     @FXML
@@ -41,20 +44,16 @@ public class MedicoController {
     private TableColumn<Cita,String> colPaciente;
 
 
-
     @FXML
     private TableColumn<Cita,String> colEspecialidad;
-
 
 
     @FXML
     private TableColumn<Cita,String> colFecha;
 
 
-
     @FXML
     private TableColumn<Cita,String> colHora;
-
 
 
     @FXML
@@ -62,14 +61,9 @@ public class MedicoController {
 
 
 
-
     @FXML
-    private Button btnAtender;
+    private TableColumn<Cita,String> colObservacion;
 
-
-
-    @FXML
-    private Button btnCancelar;
 
 
 
@@ -78,8 +72,9 @@ public class MedicoController {
 
 
 
-    private ObservableList<Cita> lista =
+    private final ObservableList<Cita> lista =
             FXCollections.observableArrayList();
+
 
 
 
@@ -92,12 +87,9 @@ public class MedicoController {
 
         cargarDatosMedico();
 
-
         configurarTabla();
 
-
         cargarCitas();
-
 
     }
 
@@ -112,15 +104,13 @@ public class MedicoController {
     private void cargarDatosMedico(){
 
 
-
         if(!Sesion.existeSesion())
             return;
 
 
 
         Medico medico =
-                (Medico)
-                        Sesion.getPersona();
+                (Medico) Sesion.getPersona();
 
 
 
@@ -129,6 +119,7 @@ public class MedicoController {
                         +" "
                         +medico.getApellido()
         );
+
 
 
         lblEspecialidad.setText(
@@ -150,73 +141,89 @@ public class MedicoController {
 
 
 
+        // NOMBRE DEL PACIENTE
+
         colPaciente.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getMedico()
+                        c.getValue()
+                                .getPaciente()
 
-                        )
+                )
 
         );
+
 
 
 
         colEspecialidad.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getEspecialidad()
+                        c.getValue()
+                                .getEspecialidad()
 
-                        )
+                )
 
         );
+
 
 
 
         colFecha.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getFecha()
-                                        .toString()
+                        c.getValue()
+                                .getFecha()
+                                .toString()
 
-                        )
+                )
 
         );
+
 
 
 
         colHora.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getHora()
-                                        .toString()
+                        c.getValue()
+                                .getHora()
+                                .toString()
 
-                        )
+                )
 
         );
 
 
 
+
         colEstado.setCellValueFactory(
 
-                c ->
-                        new javafx.beans.property.SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getEstado()
+                        c.getValue()
+                                .getEstado()
 
-                        )
+                )
+
+        );
+
+
+
+
+
+        colObservacion.setCellValueFactory(
+
+                c -> new SimpleStringProperty(
+
+                        c.getValue()
+                                .getObservacion()
+
+                )
 
         );
 
@@ -235,17 +242,26 @@ public class MedicoController {
 
 
 
+
+
+
     private void cargarCitas(){
 
 
 
+        if(!Sesion.existeSesion())
+            return;
+
+
+
         Medico medico =
-                (Medico)
-                        Sesion.getPersona();
+                (Medico) Sesion.getPersona();
+
 
 
 
         lista.clear();
+
 
 
 
@@ -259,7 +275,15 @@ public class MedicoController {
 
         );
 
+
+
+        tablaCitas.refresh();
+
+
     }
+
+
+
 
 
 
@@ -275,16 +299,19 @@ public class MedicoController {
 
 
         Cita cita =
-                tablaCitas.getSelectionModel()
+
+                tablaCitas
+                        .getSelectionModel()
                         .getSelectedItem();
 
 
 
-        if(cita==null){
+
+        if(cita == null){
 
 
             alerta(
-                    "Seleccione",
+                    "Aviso",
                     "Seleccione una cita"
             );
 
@@ -296,20 +323,90 @@ public class MedicoController {
 
 
 
-        citaDAO.actualizarEstado(
 
-                cita.getId(),
+        TextInputDialog dialog =
 
-                "Atendida"
+                new TextInputDialog();
 
+
+
+        dialog.setTitle(
+                "Atender cita"
+        );
+
+
+        dialog.setHeaderText(
+                "Observación médica"
+        );
+
+
+        dialog.setContentText(
+                "Ingrese observación:"
         );
 
 
 
-        cargarCitas();
+
+
+        dialog.showAndWait()
+
+                .ifPresent(observacion -> {
+
+
+
+                    cita.setObservacion(
+                            observacion
+                    );
+
+
+
+                    boolean actualizado =
+
+                            citaDAO.actualizar(
+
+                                    cita
+
+                            );
+
+
+
+
+
+                    if(actualizado){
+
+
+                        citaDAO.actualizarEstado(
+
+                                cita.getId(),
+
+                                "Atendida"
+
+                        );
+
+
+
+                        alerta(
+                                "Correcto",
+                                "Cita atendida correctamente"
+                        );
+
+
+
+                        cargarCitas();
+
+
+                    }
+
+
+
+                });
+
 
 
     }
+
+
+
 
 
 
@@ -325,27 +422,134 @@ public class MedicoController {
 
 
         Cita cita =
-                tablaCitas.getSelectionModel()
+
+                tablaCitas
+                        .getSelectionModel()
                         .getSelectedItem();
 
 
 
-        if(cita==null)
+
+        if(cita == null){
+
+
+            alerta(
+                    "Aviso",
+                    "Seleccione una cita"
+            );
+
+
             return;
 
+        }
 
 
-        citaDAO.actualizarEstado(
+
+
+
+        if(citaDAO.actualizarEstado(
 
                 cita.getId(),
 
                 "Cancelada"
 
-        );
+        )){
 
 
 
-        cargarCitas();
+            alerta(
+                    "Correcto",
+                    "Cita cancelada"
+            );
+
+
+
+            cargarCitas();
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    @FXML
+    public void cerrarSesion(){
+
+
+
+        Sesion.cerrarSesion();
+
+
+
+        try{
+
+
+            FXMLLoader loader =
+
+                    new FXMLLoader(
+
+                            getClass()
+                                    .getResource(
+
+                                            "/com/proyecto/sistema_citas_poli/login.fxml"
+
+                                    )
+
+                    );
+
+
+
+            Scene scene =
+
+                    new Scene(
+
+                            loader.load()
+
+                    );
+
+
+
+            Stage stage =
+
+                    (Stage)
+
+                            tablaCitas
+                                    .getScene()
+                                    .getWindow();
+
+
+
+            stage.setScene(scene);
+
+
+
+            stage.setTitle(
+                    "Inicio de sesión"
+            );
+
+
+
+        }catch(Exception e){
+
+
+            e.printStackTrace();
+
+
+        }
+
 
 
     }
@@ -363,19 +567,28 @@ public class MedicoController {
             String mensaje){
 
 
+
         Alert alert =
+
                 new Alert(
+
                         Alert.AlertType.INFORMATION
+
                 );
+
 
 
         alert.setTitle(titulo);
 
+
         alert.setHeaderText(null);
+
 
         alert.setContentText(mensaje);
 
+
         alert.showAndWait();
+
 
 
     }

@@ -3,8 +3,8 @@ package com.proyecto.sistema_citas_poli.Controller;
 
 import com.proyecto.sistema_citas_poli.DAO.CitaDAO;
 import com.proyecto.sistema_citas_poli.DAO.CitaDAOImpl;
-
 import com.proyecto.sistema_citas_poli.Model.Cita;
+import com.proyecto.sistema_citas_poli.Model.Persona;
 import com.proyecto.sistema_citas_poli.Util.Sesion;
 
 
@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 
 import javafx.stage.Stage;
 
+
 import java.sql.Date;
 import java.sql.Time;
 
@@ -32,7 +33,13 @@ public class MiscitasController {
 
 
     @FXML
+    private Label lblPaciente;
+
+
+
+    @FXML
     private TableView<Cita> tablaCitas;
+
 
 
     @FXML
@@ -56,16 +63,24 @@ public class MiscitasController {
 
 
 
+
     private final CitaDAO citaDAO =
             new CitaDAOImpl();
 
 
 
-    private ObservableList<Cita> lista =
+    private final ObservableList<Cita> lista =
             FXCollections.observableArrayList();
-    
+
+
+
+
+
     @FXML
     public void initialize(){
+
+
+        cargarPaciente();
 
 
         configurarTabla();
@@ -76,70 +91,117 @@ public class MiscitasController {
 
     }
 
+
+
+
+
+    private void cargarPaciente(){
+
+
+        if(Sesion.existeSesion()){
+
+
+            Persona paciente =
+                    Sesion.getPersona();
+
+
+
+            if(lblPaciente != null){
+
+                lblPaciente.setText(
+                        paciente.getNombre()
+                                +" "
+                                +paciente.getApellido()
+                );
+
+            }
+
+
+        }
+
+
+    }
+
+
+
+
+
     private void configurarTabla(){
 
 
 
         colMedico.setCellValueFactory(
 
-                c ->
-                        new SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getMedico()
+                        c.getValue()
+                                .getMedico()
 
-                        )
+                )
 
         );
+
+
+
         colEspecialidad.setCellValueFactory(
 
-                c ->
-                        new SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getEspecialidad()
+                        c.getValue()
+                                .getEspecialidad()
 
-                        )
+                )
 
         );
+
+
+
         colFecha.setCellValueFactory(
 
-                c ->
-                        new SimpleObjectProperty<>(
+                c -> new SimpleObjectProperty<>(
 
-                                c.getValue()
-                                        .getFecha()
+                        c.getValue()
+                                .getFecha()
 
-                        )
+                )
 
         );
+
+
 
         colHora.setCellValueFactory(
 
-                c ->
-                        new SimpleObjectProperty<>(
+                c -> new SimpleObjectProperty<>(
 
-                                c.getValue()
-                                        .getHora()
+                        c.getValue()
+                                .getHora()
 
-                        )
+                )
 
         );
 
+
+
         colEstado.setCellValueFactory(
 
-                c ->
-                        new SimpleStringProperty(
+                c -> new SimpleStringProperty(
 
-                                c.getValue()
-                                        .getEstado()
+                        c.getValue()
+                                .getEstado()
 
-                        )
+                )
 
         );
 
 
     }
+
+
+
+
+
+
+
 
     private void cargarCitas(){
 
@@ -150,7 +212,7 @@ public class MiscitasController {
 
             alerta(
                     "Error",
-                    "No existe usuario activo"
+                    "No existe sesión activa"
             );
 
 
@@ -160,17 +222,24 @@ public class MiscitasController {
 
 
 
+
+        int usuarioId =
+
+                Sesion.getPersona()
+                        .getId();
+
+
+
         lista.clear();
 
 
 
+        // SOLO LAS CITAS DEL PACIENTE LOGUEADO
+
         lista.addAll(
 
                 citaDAO.listarPorUsuario(
-
-                        Sesion.getPersona()
-                                .getId()
-
+                        usuarioId
                 )
 
         );
@@ -181,20 +250,39 @@ public class MiscitasController {
 
 
 
+        System.out.println(
+                "Citas del usuario "
+                        +usuarioId
+                        +" : "
+                        +lista.size()
+        );
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
     @FXML
     public void cancelarCita(){
 
 
 
-        Cita seleccionada =
+        Cita cita =
+
                 tablaCitas.getSelectionModel()
                         .getSelectedItem();
 
 
 
-
-        if(seleccionada == null){
+        if(cita == null){
 
 
             alerta(
@@ -208,26 +296,21 @@ public class MiscitasController {
         }
 
 
-        boolean resultado =
-
-                citaDAO.actualizarEstado(
-
-                        seleccionada.getId(),
-
-                        "Cancelada"
-
-                );
 
 
 
+        if(citaDAO.actualizarEstado(
 
+                cita.getId(),
 
-        if(resultado){
+                "Cancelada"
+
+        )){
 
 
             alerta(
                     "Correcto",
-                    "La cita fue cancelada"
+                    "Cita cancelada"
             );
 
 
@@ -235,27 +318,26 @@ public class MiscitasController {
 
 
 
-        }else{
-
-
-            alerta(
-                    "Error",
-                    "No se pudo cancelar la cita"
-            );
-
-
         }
 
 
 
     }
 
+
+
+
+
+
+
+
+
     @FXML
     public void eliminarCita(){
 
 
 
-        Cita seleccionada =
+        Cita cita =
 
                 tablaCitas.getSelectionModel()
                         .getSelectedItem();
@@ -263,7 +345,7 @@ public class MiscitasController {
 
 
 
-        if(seleccionada == null){
+        if(cita == null){
 
 
             alerta(
@@ -280,49 +362,28 @@ public class MiscitasController {
 
 
 
-        Alert confirmacion =
+        Alert confirmar =
 
                 new Alert(
                         Alert.AlertType.CONFIRMATION
                 );
 
 
-        confirmacion.setTitle(
-                "Eliminar cita"
-        );
 
-
-        confirmacion.setHeaderText(null);
-
-
-        confirmacion.setContentText(
-                "¿Está seguro de eliminar esta cita?"
+        confirmar.setContentText(
+                "¿Eliminar esta cita?"
         );
 
 
 
-        if(confirmacion.showAndWait()
+        if(confirmar.showAndWait()
                 .get()
                 ==
                 ButtonType.OK){
 
 
 
-
-
-            boolean eliminado =
-
-                    citaDAO.eliminar(
-
-                            seleccionada.getId()
-
-                    );
-
-
-
-
-
-            if(eliminado){
+            if(citaDAO.eliminar(cita.getId())){
 
 
                 alerta(
@@ -332,17 +393,6 @@ public class MiscitasController {
 
 
                 cargarCitas();
-
-
-
-            }else{
-
-
-                alerta(
-                        "Error",
-                        "No se pudo eliminar"
-                );
-
 
             }
 
@@ -354,17 +404,210 @@ public class MiscitasController {
     }
 
 
+
+
+
+
+
+
+
     @FXML
-    public void actualizarTabla() {
+    public void editarCita(){
 
 
-        cargarCitas();
+        Cita cita =
+                tablaCitas.getSelectionModel()
+                        .getSelectedItem();
+
+
+
+        if(cita == null){
+
+
+            alerta(
+                    "Aviso",
+                    "Seleccione una cita para editar"
+            );
+
+            return;
+
+        }
+
+
+
+        Dialog<ButtonType> dialog =
+                new Dialog<>();
+
+
+        dialog.setTitle("Editar cita");
+
+        dialog.setHeaderText(
+                "Modificar fecha y hora"
+        );
+
+
+
+        DatePicker fechaNueva =
+                new DatePicker(
+                        cita.getFecha()
+                                .toLocalDate()
+                );
+
+
+
+        ComboBox<String> horaNueva =
+                new ComboBox<>();
+
+
+        horaNueva.setItems(
+
+                FXCollections.observableArrayList(
+
+                        "08:00",
+                        "09:00",
+                        "10:00",
+                        "11:00",
+                        "14:00",
+                        "15:00",
+                        "16:00"
+
+                )
+
+        );
+
+
+
+        horaNueva.setValue(
+
+                cita.getHora()
+                        .toString()
+                        .substring(0,5)
+
+        );
+
+
+
+        javafx.scene.layout.VBox contenido =
+                new javafx.scene.layout.VBox(
+                        15,
+                        new Label("Nueva fecha"),
+                        fechaNueva,
+                        new Label("Nueva hora"),
+                        horaNueva
+                );
+
+
+        contenido.setPadding(
+                new javafx.geometry.Insets(20)
+        );
+
+
+
+        dialog.getDialogPane()
+                .setContent(contenido);
+
+
+
+        dialog.getDialogPane()
+                .getButtonTypes()
+                .addAll(
+
+                        ButtonType.OK,
+                        ButtonType.CANCEL
+
+                );
+
+
+
+
+
+        if(dialog.showAndWait()
+                .get()
+                ==
+                ButtonType.OK){
+
+
+
+            if(fechaNueva.getValue()==null
+                    ||
+                    horaNueva.getValue()==null){
+
+
+                alerta(
+                        "Error",
+                        "Complete todos los campos"
+                );
+
+                return;
+
+            }
+
+
+
+
+
+            cita.setFecha(
+
+                    Date.valueOf(
+                            fechaNueva.getValue()
+                    )
+
+            );
+
+
+
+            cita.setHora(
+
+                    Time.valueOf(
+                            horaNueva.getValue()
+                                    +":00"
+                    )
+
+            );
+
+
+
+
+
+            if(citaDAO.actualizar(cita)){
+
+
+
+                alerta(
+                        "Correcto",
+                        "Cita actualizada correctamente"
+                );
+
+
+
+                cargarCitas();
+
+
+
+            }else{
+
+
+                alerta(
+                        "Error",
+                        "No se pudo actualizar la cita"
+                );
+
+
+            }
+
+
+
+        }
+
 
 
     }
 
+
+
     @FXML
     public void volver(){
+
 
 
         try{
@@ -376,9 +619,7 @@ public class MiscitasController {
 
                             getClass()
                                     .getResource(
-
                                             "/com/proyecto/sistema_citas_poli/paciente.fxml"
-
                                     )
 
                     );
@@ -388,9 +629,7 @@ public class MiscitasController {
             Scene scene =
 
                     new Scene(
-
                             loader.load()
-
                     );
 
 
@@ -398,7 +637,6 @@ public class MiscitasController {
             Stage stage =
 
                     (Stage)
-
                             tablaCitas.getScene()
                                     .getWindow();
 
@@ -408,22 +646,21 @@ public class MiscitasController {
 
 
 
-            stage.setTitle(
-                    "Panel Paciente"
-            );
-
-
-
         }catch(Exception e){
 
-
             e.printStackTrace();
-
 
         }
 
 
     }
+
+
+
+
+
+
+
 
 
     private void alerta(
@@ -449,7 +686,6 @@ public class MiscitasController {
 
 
     }
-
 
 
 }

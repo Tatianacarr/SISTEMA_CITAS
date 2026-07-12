@@ -9,13 +9,10 @@ import com.proyecto.sistema_citas_poli.DAO.MedicoDAOImpl;
 import com.proyecto.sistema_citas_poli.Model.Cita;
 import com.proyecto.sistema_citas_poli.Model.Medico;
 import com.proyecto.sistema_citas_poli.Model.Persona;
-
 import com.proyecto.sistema_citas_poli.Util.Sesion;
 
 
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
@@ -30,6 +27,7 @@ import java.sql.Time;
 
 
 public class CitaController {
+
 
 
     @FXML
@@ -53,42 +51,14 @@ public class CitaController {
 
 
 
-    @FXML
-    private TableView<Cita> tablaCitas;
-
-
-    @FXML
-    private TableColumn<Cita,String> colMedico;
-
-
-    @FXML
-    private TableColumn<Cita,String> colEspecialidad;
-
-
-    @FXML
-    private TableColumn<Cita,Date> colFecha;
-
-
-    @FXML
-    private TableColumn<Cita,Time> colHora;
-
-
-    @FXML
-    private TableColumn<Cita,String> colEstado;
-
-
-
     private final MedicoDAO medicoDAO =
             new MedicoDAOImpl();
+
 
 
     private final CitaDAO citaDAO =
             new CitaDAOImpl();
 
-
-
-    private ObservableList<Cita> lista =
-            FXCollections.observableArrayList();
 
 
 
@@ -97,9 +67,65 @@ public class CitaController {
     public void initialize(){
 
 
-        // Cargar todos los médicos
-        cargarTodosLosMedicos();
+        cargarMedicos();
 
+
+        cargarHoras();
+
+
+
+        cbMedico.setOnAction(e -> {
+
+
+            Medico medico =
+                    cbMedico.getValue();
+
+
+
+            if(medico != null){
+
+
+                cbEspecialidad.setValue(
+                        medico.getEspecialidad()
+                );
+
+
+            }
+
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+    private void cargarMedicos(){
+
+
+        cbMedico.setItems(
+
+                FXCollections.observableArrayList(
+
+                        medicoDAO.leerTodos()
+
+                )
+
+        );
+
+
+    }
+
+
+
+
+
+
+    private void cargarHoras(){
 
 
         cbHora.setItems(
@@ -119,71 +145,7 @@ public class CitaController {
         );
 
 
-
-        // Cuando selecciona médico muestra especialidad
-        cbMedico.setOnAction(e -> {
-
-
-            Medico medico =
-                    cbMedico.getValue();
-
-
-            if(medico != null){
-
-
-                cbEspecialidad.setValue(
-                        medico.getEspecialidad()
-                );
-
-
-            }
-
-
-        });
-
-
-
-        configurarTabla();
-
-
-        cargarCitas();
-
-
     }
-
-
-
-
-
-
-
-    private void cargarTodosLosMedicos(){
-
-
-        var medicos =
-                medicoDAO.leerTodos();
-
-
-
-        cbMedico.setItems(
-
-                FXCollections.observableArrayList(
-                        medicos
-                )
-
-        );
-
-
-
-        System.out.println(
-                "Médicos encontrados: "
-                        + medicos.size()
-        );
-
-
-    }
-
-
 
 
 
@@ -193,110 +155,89 @@ public class CitaController {
     public void guardarCita(){
 
 
-
         if(cbMedico.getValue()==null){
 
-
-            alerta(
-                    "Error",
-                    "Seleccione un médico"
-            );
-
+            alerta("Error","Seleccione un médico");
             return;
 
         }
-
 
 
         if(fecha.getValue()==null){
 
-
-            alerta(
-                    "Error",
-                    "Seleccione una fecha"
-            );
-
+            alerta("Error","Seleccione una fecha");
             return;
 
         }
-
 
 
         if(cbHora.getValue()==null){
 
-
-            alerta(
-                    "Error",
-                    "Seleccione una hora"
-            );
-
+            alerta("Error","Seleccione una hora");
             return;
 
         }
 
 
 
-        Persona usuario =
-                Sesion.getPersona();
+        Persona paciente = Sesion.getPersona();
 
 
-
-        if(usuario==null){
-
+        if(paciente==null){
 
             alerta(
                     "Error",
                     "No existe sesión activa"
             );
 
-
             return;
 
         }
 
 
 
-
-        Medico medico =
-                cbMedico.getValue();
+        Medico medico = cbMedico.getValue();
 
 
 
+        Cita cita = new Cita(
+
+                0,
+
+                paciente.getId(),       // usuario_id
+
+                medico.getMedicoId(),  // medico_id
 
 
-        Cita cita =
-                new Cita(
-
-                        0,
-
-                        usuario.getId(),
-
-                        medico.getMedicoId(),
-
-                        medico.getNombre()
-                                +" "
-                                +
-                                medico.getApellido(),
-
-                        medico.getEspecialidad(),
+                paciente.getNombre()
+                        +" "
+                        +paciente.getApellido(), // PACIENTE
 
 
-                        Date.valueOf(
-                                fecha.getValue()
-                        ),
+                medico.getNombre()
+                        +" "
+                        +medico.getApellido(),  // MEDICO
 
 
-                        Time.valueOf(
-                                cbHora.getValue()
-                                        +":00"
-                        ),
+                medico.getEspecialidad(), // ESPECIALIDAD
 
 
-                        "Pendiente"
+                Date.valueOf(
+                        fecha.getValue()
+                ),
 
-                );
+
+                Time.valueOf(
+                        cbHora.getValue()+":00"
+                ),
 
 
+                "Pendiente",
+
+
+                txtDescripcion.getText()
+
+        );
 
 
 
@@ -306,12 +247,11 @@ public class CitaController {
 
             alerta(
                     "Correcto",
-                    "Cita agendada correctamente"
+                    "Cita registrada correctamente"
             );
 
 
-            cargarCitas();
-
+            limpiar();
 
 
         }else{
@@ -322,7 +262,6 @@ public class CitaController {
                     "No se pudo guardar la cita"
             );
 
-
         }
 
 
@@ -330,117 +269,22 @@ public class CitaController {
     }
 
 
+    private void limpiar(){
 
 
+        cbMedico.setValue(null);
 
+        cbEspecialidad.setValue(null);
 
+        fecha.setValue(null);
 
-    private void cargarCitas(){
+        cbHora.setValue(null);
 
-
-        if(!Sesion.existeSesion())
-            return;
-
-
-
-        lista.clear();
-
-
-
-        lista.addAll(
-
-                citaDAO.listarPorUsuario(
-                        Sesion.getPersona()
-                                .getId()
-                )
-
-        );
-
-
-
-        if(tablaCitas!=null){
-
-            tablaCitas.setItems(lista);
-
-        }
+        txtDescripcion.clear();
 
 
     }
 
-
-
-
-
-
-
-    private void configurarTabla(){
-
-
-        if(tablaCitas==null)
-            return;
-
-
-
-        colMedico.setCellValueFactory(
-
-                c -> new javafx.beans.property.SimpleStringProperty(
-
-                        c.getValue().getMedico()
-
-                )
-
-        );
-
-
-
-        colEspecialidad.setCellValueFactory(
-
-                c -> new javafx.beans.property.SimpleStringProperty(
-
-                        c.getValue().getEspecialidad()
-
-                )
-
-        );
-
-
-
-        colFecha.setCellValueFactory(
-
-                c -> new javafx.beans.property.SimpleObjectProperty<>(
-
-                        c.getValue().getFecha()
-
-                )
-
-        );
-
-
-
-        colHora.setCellValueFactory(
-
-                c -> new javafx.beans.property.SimpleObjectProperty<>(
-
-                        c.getValue().getHora()
-
-                )
-
-        );
-
-
-
-        colEstado.setCellValueFactory(
-
-                c -> new javafx.beans.property.SimpleStringProperty(
-
-                        c.getValue().getEstado()
-
-                )
-
-        );
-
-
-    }
 
 
 
@@ -456,11 +300,14 @@ public class CitaController {
 
 
             FXMLLoader loader =
+
                     new FXMLLoader(
 
                             getClass()
                                     .getResource(
+
                                             "/com/proyecto/sistema_citas_poli/paciente.fxml"
+
                                     )
 
                     );
@@ -468,12 +315,17 @@ public class CitaController {
 
 
             Scene scene =
-                    new Scene(loader.load());
+
+                    new Scene(
+                            loader.load()
+                    );
 
 
 
             Stage stage =
+
                     (Stage)
+
                             cbMedico.getScene()
                                     .getWindow();
 
@@ -485,12 +337,15 @@ public class CitaController {
 
         }catch(Exception e){
 
+
             e.printStackTrace();
+
 
         }
 
 
     }
+
 
 
 

@@ -20,26 +20,36 @@
           AnchorPane.rightAnchor="30">
 
 
+
         <Label
                 text="👨‍⚕️ Panel del Médico"
                 styleClass="tituloPrincipal"/>
 
 
 
-        <HBox spacing="20">
+
+
+        <HBox spacing="20"
+              alignment="CENTER">
 
 
             <Label text="Médico:"/>
 
+
             <Label fx:id="lblNombre"/>
 
 
+
             <Label text="Especialidad:"/>
+
 
             <Label fx:id="lblEspecialidad"/>
 
 
         </HBox>
+
+
+
 
 
 
@@ -52,10 +62,14 @@
             <columns>
 
 
+
                 <TableColumn
                         fx:id="colPaciente"
                         text="Paciente"
                         prefWidth="180"/>
+
+
+
 
 
                 <TableColumn
@@ -64,10 +78,16 @@
                         prefWidth="150"/>
 
 
+
+
+
                 <TableColumn
                         fx:id="colFecha"
                         text="Fecha"
                         prefWidth="120"/>
+
+
+
 
 
                 <TableColumn
@@ -76,16 +96,33 @@
                         prefWidth="100"/>
 
 
+
+
+
                 <TableColumn
                         fx:id="colEstado"
                         text="Estado"
                         prefWidth="120"/>
 
 
+
+
+
+                <TableColumn
+                        fx:id="colObservacion"
+                        text="Observación médica"
+                        prefWidth="250"/>
+
+
+
             </columns>
 
 
+
         </TableView>
+
+
+
 
 
 
@@ -95,11 +132,17 @@
               alignment="CENTER">
 
 
+
+
+
             <Button
                     fx:id="btnAtender"
                     text="✅ Atender cita"
                     onAction="#atenderCita"
                     styleClass="botonPrincipal"/>
+
+
+
 
 
 
@@ -111,7 +154,20 @@
 
 
 
+
+
+            <Button
+                    text="🚪 Cerrar sesión"
+                    onAction="#cerrarSesion"
+                    styleClass="botonSecundario"/>
+
+
+
+
+
         </HBox>
+
+
 
 
 

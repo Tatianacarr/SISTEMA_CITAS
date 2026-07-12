@@ -43,10 +43,19 @@ public class RegistroController {
     @FXML
     private Button btnVolver;
 
+    @FXML
+    private Button btnRegistrar;
+
 
 
     private final PersonaDAO personaDAO =
             new PersonaDAOImpl();
+
+
+
+    // Para edición desde administrador
+    private Persona personaEditar;
+
 
 
 
@@ -61,50 +70,35 @@ public class RegistroController {
         );
 
 
-        // Ocultar especialidad al iniciar
-        txtEspecialidad.setVisible(false);
-        txtEspecialidad.setManaged(false);
+        ocultarEspecialidad();
 
 
 
         cbRol.setOnAction(event -> {
 
 
-            String rol = cbRol.getValue();
+            String rol =
+                    cbRol.getValue();
 
 
 
-            if(rol == null){
-                return;
-            }
-
-
-
-            if(rol.equals("MEDICO")){
+            if("MEDICO".equals(rol)){
 
 
                 txtEspecialidad.setVisible(true);
                 txtEspecialidad.setManaged(true);
-                txtEspecialidad.setDisable(false);
-
 
 
             }else{
 
 
-                txtEspecialidad.clear();
-
-                txtEspecialidad.setVisible(false);
-                txtEspecialidad.setManaged(false);
-                txtEspecialidad.setDisable(true);
+                ocultarEspecialidad();
 
 
             }
 
 
-
         });
-
 
 
     }
@@ -113,9 +107,71 @@ public class RegistroController {
 
 
 
+    //====================================
+    // CARGAR USUARIO PARA EDITAR
+    //====================================
+
+    public void cargarUsuario(Persona persona){
+
+
+        this.personaEditar = persona;
+
+
+
+        txtNombre.setText(
+                persona.getNombre()
+        );
+
+
+        txtApellido.setText(
+                persona.getApellido()
+        );
+
+
+        txtCorreo.setText(
+                persona.getCorreo()
+        );
+
+
+        txtTelefono.setText(
+                persona.getTelefono()
+        );
+
+
+        txtContrasena.setText(
+                persona.getContrasena()
+        );
+
+
+        txtConfirmar.setText(
+                persona.getContrasena()
+        );
+
+
+        cbRol.setValue(
+                persona.getRol()
+        );
+
+
+        btnRegistrar.setText(
+                "Actualizar"
+        );
+
+
+    }
+
+
+
+
+
+
+    //====================================
+    // REGISTRAR / ACTUALIZAR
+    //====================================
+
+
     @FXML
     public void registrar(){
-
 
 
         String nombre =
@@ -147,17 +203,18 @@ public class RegistroController {
 
 
 
+
         if(nombre.isEmpty()
                 || apellido.isEmpty()
                 || correo.isEmpty()
-                || password.isEmpty()
                 || rol == null){
 
 
             alerta(
                     "Campos incompletos",
-                    "Complete todos los campos obligatorios"
+                    "Complete los campos obligatorios"
             );
+
 
             return;
 
@@ -170,13 +227,83 @@ public class RegistroController {
 
             alerta(
                     "Correo inválido",
-                    "Ingrese un correo válido"
+                    "Ingrese un correo correcto"
             );
+
 
             return;
 
         }
 
+
+
+
+        //================================
+        // ACTUALIZAR USUARIO
+        //================================
+
+
+        if(personaEditar != null){
+
+
+            personaEditar.setNombre(nombre);
+
+            personaEditar.setApellido(apellido);
+
+            personaEditar.setCorreo(correo);
+
+            personaEditar.setTelefono(telefono);
+
+            personaEditar.setRol(rol);
+
+
+
+            boolean actualizado =
+                    personaDAO.actualizar(
+                            personaEditar
+                    );
+
+
+
+            if(actualizado){
+
+
+                alerta(
+                        "Actualizado",
+                        "Usuario actualizado correctamente"
+                );
+
+
+                limpiar();
+
+
+
+            }else{
+
+
+                alerta(
+                        "Error",
+                        "No se pudo actualizar usuario"
+                );
+
+
+            }
+
+
+
+            return;
+
+        }
+
+
+
+
+
+
+
+        //================================
+        // NUEVO REGISTRO
+        //================================
 
 
         if(password.length() < 8){
@@ -187,9 +314,11 @@ public class RegistroController {
                     "Debe tener mínimo 8 caracteres"
             );
 
+
             return;
 
         }
+
 
 
 
@@ -200,6 +329,7 @@ public class RegistroController {
                     "Error",
                     "Las contraseñas no coinciden"
             );
+
 
             return;
 
@@ -212,6 +342,7 @@ public class RegistroController {
 
 
 
+
         switch(rol){
 
 
@@ -220,7 +351,9 @@ public class RegistroController {
 
 
                 String especialidad =
-                        txtEspecialidad.getText().trim();
+                        txtEspecialidad
+                                .getText()
+                                .trim();
 
 
 
@@ -239,24 +372,23 @@ public class RegistroController {
 
 
 
-                persona = new Medico(
 
-                        0,
-                        nombre,
-                        apellido,
-                        correo,
-                        password,
-                        rol,
-                        telefono,
-                        true,
-                        0,
-                        especialidad
-
-                );
+                persona =
+                        new Medico(
+                                0,
+                                nombre,
+                                apellido,
+                                correo,
+                                password,
+                                rol,
+                                telefono,
+                                true,
+                                0,
+                                especialidad
+                        );
 
 
                 break;
-
 
 
 
@@ -264,18 +396,17 @@ public class RegistroController {
             case "ADMINISTRADOR":
 
 
-                persona = new Administrador(
-
-                        0,
-                        nombre,
-                        apellido,
-                        correo,
-                        password,
-                        rol,
-                        telefono,
-                        true
-
-                );
+                persona =
+                        new Administrador(
+                                0,
+                                nombre,
+                                apellido,
+                                correo,
+                                password,
+                                rol,
+                                telefono,
+                                true
+                        );
 
 
                 break;
@@ -283,24 +414,21 @@ public class RegistroController {
 
 
 
-
             default:
 
 
-
-                persona = new Paciente(
-
-                        0,
-                        nombre,
-                        apellido,
-                        correo,
-                        password,
-                        rol,
-                        telefono,
-                        true,
-                        "Sin historial"
-
-                );
+                persona =
+                        new Paciente(
+                                0,
+                                nombre,
+                                apellido,
+                                correo,
+                                password,
+                                rol,
+                                telefono,
+                                true,
+                                "Sin historial"
+                        );
 
 
                 break;
@@ -311,8 +439,12 @@ public class RegistroController {
 
 
 
+
+
         boolean guardado =
                 personaDAO.crear(persona);
+
+
 
 
 
@@ -325,6 +457,7 @@ public class RegistroController {
             );
 
 
+
             limpiar();
 
 
@@ -334,7 +467,7 @@ public class RegistroController {
 
             alerta(
                     "Error",
-                    "No se pudo crear el usuario"
+                    "No se pudo registrar usuario"
             );
 
 
@@ -342,6 +475,7 @@ public class RegistroController {
 
 
     }
+
 
 
 
@@ -369,6 +503,19 @@ public class RegistroController {
                 .clearSelection();
 
 
+        ocultarEspecialidad();
+
+
+    }
+
+
+
+
+
+
+
+    private void ocultarEspecialidad(){
+
 
         txtEspecialidad.clear();
 
@@ -377,9 +524,7 @@ public class RegistroController {
         txtEspecialidad.setManaged(false);
 
 
-
     }
-
 
 
 
@@ -399,19 +544,21 @@ public class RegistroController {
                             getClass()
                                     .getResource(
                                             "/com/proyecto/sistema_citas_poli/login.fxml"
-                                    )
-                    );
+                                    ));
 
 
 
             Scene scene =
-                    new Scene(loader.load());
+                    new Scene(
+                            loader.load()
+                    );
 
 
 
             Stage stage =
                     (Stage)
-                            btnVolver.getScene()
+                            btnVolver
+                                    .getScene()
                                     .getWindow();
 
 
@@ -424,6 +571,12 @@ public class RegistroController {
 
 
             e.printStackTrace();
+
+
+            alerta(
+                    "Error",
+                    "No se pudo volver al login"
+            );
 
 
         }
@@ -450,9 +603,12 @@ public class RegistroController {
 
         alert.setTitle(titulo);
 
+
         alert.setHeaderText(null);
 
+
         alert.setContentText(mensaje);
+
 
         alert.showAndWait();
 

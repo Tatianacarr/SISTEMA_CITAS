@@ -30,6 +30,7 @@
             AnchorPane.rightAnchor="0">
 
 
+
         <VBox
 
                 spacing="15"
@@ -62,9 +63,11 @@
 
             <Label
 
-                    text="Consulta, cancela o elimina tus citas"
+                    text="Consulta, cancela, elimina o edita tus citas"
 
                     styleClass="subtitulo"/>
+
+
 
 
 
@@ -77,7 +80,9 @@
                     prefHeight="350">
 
 
+
                 <columns>
+
 
 
                     <TableColumn
@@ -129,10 +134,13 @@
                             prefWidth="120"/>
 
 
+
                 </columns>
 
 
             </TableView>
+
+
 
 
 
@@ -142,6 +150,8 @@
                     spacing="20"
 
                     alignment="CENTER">
+
+
 
 
 
@@ -156,6 +166,7 @@
                         onAction="#cancelarCita"
 
                         styleClass="botonSecundario"/>
+
 
 
 
@@ -175,22 +186,26 @@
 
 
 
+
                 <Button
 
-                        text="🔄 Actualizar"
+                        text="✏️ Editar cita"
 
                         prefWidth="160"
 
                         prefHeight="40"
 
-                        onAction="#actualizarTabla"
+                        onAction="#editarCita"
 
                         styleClass="botonPrincipal"/>
 
 
 
 
+
             </HBox>
+
+
 
 
 
@@ -209,10 +224,14 @@
 
 
 
+
+
         </VBox>
 
 
+
     </VBox>
+
 
 
 </AnchorPane>
