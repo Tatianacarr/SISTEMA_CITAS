@@ -251,3 +251,21 @@ SELECT * FROM paciente;
 SELECT * FROM medico;
 
 SELECT * FROM citas;
+SELECT
+    u.id,
+    u.nombre,
+    u.apellido,
+    m.id AS medico_id,
+    m.especialidad
+FROM usuario u
+         INNER JOIN medico m
+                    ON u.id = m.usuario_id
+WHERE LOWER(m.especialidad)
+          LIKE LOWER('%Cardiología%');
+SELECT *
+FROM medico;
+SELECT *
+FROM usuario
+WHERE rol='MEDICO';
+ALTER TABLE citas
+    ADD COLUMN observacion TEXT;
