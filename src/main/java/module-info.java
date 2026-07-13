@@ -3,6 +3,7 @@ module com.proyecto.sistema_citas_poli {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires java.desktop;
 
     opens com.proyecto.sistema_citas_poli.Controller
             to javafx.fxml;

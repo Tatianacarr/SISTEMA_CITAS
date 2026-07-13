@@ -1,34 +1,27 @@
 package com.proyecto.sistema_citas_poli.Controller;
 
 
-import com.proyecto.sistema_citas_poli.DAO.PersonaDAO;
-import com.proyecto.sistema_citas_poli.DAO.PersonaDAOImpl;
-import com.proyecto.sistema_citas_poli.Model.Persona;
-import com.proyecto.sistema_citas_poli.Util.Sesion;
+import com.proyecto.sistema_citas_poli.DAO.*;
+import com.proyecto.sistema_citas_poli.Model.*;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 
-
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-
-
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
-
-import javafx.stage.Stage;
-
-
-import java.util.List;
+import java.sql.Date;
+import java.sql.Time;
+import java.util.Optional;
 
 
 
@@ -36,7 +29,24 @@ public class AdministradorController {
 
 
     //==============================
-    // FXML
+    // PANELES
+    //==============================
+
+    @FXML
+    private VBox panelInicio;
+
+    @FXML
+    private VBox panelUsuarios;
+
+    @FXML
+    private VBox panelMedicos;
+
+    @FXML
+    private VBox panelCitas;
+
+
+    //==============================
+    // INFORMACION INICIO
     //==============================
 
 
@@ -45,47 +55,126 @@ public class AdministradorController {
 
 
     @FXML
-    private Label lblTitulo;
+    private Label lblTotalPacientes;
 
 
     @FXML
-    private TextField txtBuscar;
-
-
-
-    @FXML
-    private TableView<Persona> tablaDatos;
-
+    private Label lblTotalMedicos;
 
 
     @FXML
-    private TableColumn<Persona,Integer> colId;
+    private Label lblTotalCitas;
+
+
+    //==============================
+    // PACIENTES
+    //==============================
 
 
     @FXML
-    private TableColumn<Persona,String> colNombre;
+    private TableView<Paciente> tablaPacientes;
 
 
     @FXML
-    private TableColumn<Persona,String> colApellido;
+    private TableColumn<Paciente, Integer> colPacienteId;
 
 
     @FXML
-    private TableColumn<Persona,String> colCorreo;
+    private TableColumn<Paciente, String> colPacienteNombre;
 
 
     @FXML
-    private TableColumn<Persona,String> colRol;
+    private TableColumn<Paciente, String> colPacienteApellido;
 
 
     @FXML
-    private TableColumn<Persona,String> colTelefono;
+    private TableColumn<Paciente, String> colPacienteCorreo;
 
 
     @FXML
-    private TableColumn<Persona,Boolean> colEstado;
+    private TableColumn<Paciente, String> colPacienteTelefono;
 
 
+    @FXML
+    private TextField txtBuscarPaciente;
+
+
+    //==============================
+    // MEDICOS
+    //==============================
+
+
+    @FXML
+    private TableView<Medico> tablaMedicos;
+
+
+    @FXML
+    private TableColumn<Medico, Integer> colMedicoId;
+
+
+    @FXML
+    private TableColumn<Medico, String> colMedicoNombre;
+
+
+    @FXML
+    private TableColumn<Medico, String> colMedicoApellido;
+
+
+    @FXML
+    private TableColumn<Medico, String> colMedicoEspecialidad;
+
+
+    @FXML
+    private TableColumn<Medico, String> colMedicoCorreo;
+
+
+    @FXML
+    private TableColumn<Medico, String> colMedicoTelefono;
+
+
+    @FXML
+    private TextField txtBuscarMedico;
+
+
+    //==============================
+    // CITAS
+    //==============================
+
+
+    @FXML
+    private TableView<Cita> tablaCitas;
+
+
+    @FXML
+    private TableColumn<Cita, Integer> colCitaId;
+
+
+    @FXML
+    private TableColumn<Cita, String> colCitaPaciente;
+
+
+    @FXML
+    private TableColumn<Cita, String> colCitaMedico;
+
+
+    @FXML
+    private TableColumn<Cita, String> colCitaEspecialidad;
+
+
+    @FXML
+    private TableColumn<Cita, Date> colCitaFecha;
+
+
+    @FXML
+    private TableColumn<Cita, Time> colCitaHora;
+
+
+    @FXML
+    private TableColumn<Cita, String> colCitaEstado;
+
+
+    @FXML
+    private TableColumn<Cita, String> colCitaObservacion;
 
 
     //==============================
@@ -93,18 +182,47 @@ public class AdministradorController {
     //==============================
 
 
-    private final PersonaDAO personaDAO =
-            new PersonaDAOImpl();
+    private final PacienteDAO pacienteDAO =
+            new PacienteDAOImpl();
 
 
+    private final MedicoDAO medicoDAO =
+            new MedicoDAOImpl();
 
-    private final ObservableList<Persona> lista =
+
+    private final CitaDAO citaDAO =
+            new CitaDAOImpl();
+
+
+    //==============================
+    // LISTAS
+    //==============================
+
+
+    private ObservableList<Paciente> pacientes =
             FXCollections.observableArrayList();
 
 
+    private ObservableList<Medico> medicos =
+            FXCollections.observableArrayList();
 
-    private Persona personaSeleccionada;
 
+    private ObservableList<Cita> citas =
+            FXCollections.observableArrayList();
+
+
+    //==============================
+    // SELECCIONADOS
+    //==============================
+
+
+    private Paciente pacienteSeleccionado;
+
+
+    private Medico medicoSeleccionado;
+
+
+    private Cita citaSeleccionada;
 
 
     //==============================
@@ -113,48 +231,70 @@ public class AdministradorController {
 
 
     @FXML
-    public void initialize(){
+    public void initialize() {
 
 
-        cargarAdministrador();
+        configurarTablaPacientes();
+
+        configurarTablaMedicos();
+
+        configurarTablaCitas();
 
 
-        configurarTabla();
-
-
-        cargarUsuarios();
-
-
-
-        tablaDatos.setOnMouseClicked(event -> {
-
-            seleccionarUsuario();
-
-        });
+        mostrarInicio(null);
 
 
     }
 
 
+    @FXML
+    private void mostrarInicio(ActionEvent event) {
 
 
+        panelInicio.setVisible(true);
 
-    private void cargarAdministrador(){
+        panelUsuarios.setVisible(false);
 
+        panelMedicos.setVisible(false);
 
-        if(Sesion.existeSesion()){
-
-
-            Persona admin =
-                    Sesion.getPersona();
+        panelCitas.setVisible(false);
 
 
-            lblAdministrador.setText(
+        cargarDatosInicio();
 
-                    admin.getNombre()
-                            +" "
-                            +admin.getApellido()
+    }
 
+
+    private void cargarDatosInicio() {
+
+
+        try {
+
+
+            lblTotalPacientes.setText(
+                    "👥 Pacientes: "
+                            + pacienteDAO.listarTodos().size()
+            );
+
+
+            lblTotalMedicos.setText(
+                    "👨‍⚕️ Médicos: "
+                            + medicoDAO.leerTodos().size()
+            );
+
+
+            lblTotalCitas.setText(
+                    "📅 Citas: "
+                            + citaDAO.listarTodas().size()
+            );
+
+
+        } catch (Exception e) {
+
+
+            System.out.println(
+                    "Error inicio: "
+                            + e.getMessage()
             );
 
 
@@ -162,201 +302,111 @@ public class AdministradorController {
 
 
     }
-
-
-
-
     //==============================
-    // TABLA
-    //==============================
-
-
-    private void configurarTabla(){
-
-
-        colId.setCellValueFactory(
-                new PropertyValueFactory<>("id")
-        );
-
-
-        colNombre.setCellValueFactory(
-                new PropertyValueFactory<>("nombre")
-        );
-
-
-        colApellido.setCellValueFactory(
-                new PropertyValueFactory<>("apellido")
-        );
-
-
-        colCorreo.setCellValueFactory(
-                new PropertyValueFactory<>("correo")
-        );
-
-
-        colRol.setCellValueFactory(
-                new PropertyValueFactory<>("rol")
-        );
-
-
-        colTelefono.setCellValueFactory(
-                new PropertyValueFactory<>("telefono")
-        );
-
-
-        colEstado.setCellValueFactory(
-                new PropertyValueFactory<>("activo")
-        );
-
-
-    }
-
-
-
-
-    private void cargarUsuarios(){
-
-
-        lista.clear();
-
-
-        lista.addAll(
-                personaDAO.listarTodos()
-        );
-
-
-        tablaDatos.setItems(lista);
-
-
-    }
-
-
-
-
-
-    //==============================
-    // MENU
+    // PACIENTES
     //==============================
 
 
     @FXML
-    public void mostrarInicio(){
-
-        lblTitulo.setText(
-                "Panel de Administración"
-        );
-
-        cargarUsuarios();
-
-    }
+    private void mostrarUsuarios(ActionEvent event) {
 
 
+        panelInicio.setVisible(false);
+
+        panelUsuarios.setVisible(true);
+
+        panelMedicos.setVisible(false);
+
+        panelCitas.setVisible(false);
 
 
-    @FXML
-    public void mostrarUsuarios(){
-
-        lblTitulo.setText(
-                "Usuarios Registrados"
-        );
-
-        cargarUsuarios();
+        cargarPacientes();
 
     }
 
 
+    private void cargarPacientes() {
 
 
+        pacientes =
+                FXCollections.observableArrayList(
+                        pacienteDAO.listarTodos()
+                );
 
-    //==============================
-    // BUSCAR
-    //==============================
+
+        tablaPacientes.setItems(pacientes);
+
+
+    }
 
 
     @FXML
-    public void buscar(){
+    private void buscarPaciente(ActionEvent event) {
 
 
         String texto =
-                txtBuscar.getText()
-                        .trim();
+                txtBuscarPaciente.getText()
+                        .trim()
+                        .toLowerCase();
 
 
+        if (texto.isEmpty()) {
 
-        if(texto.isEmpty()){
 
-
-            cargarUsuarios();
+            cargarPacientes();
 
             return;
 
         }
 
 
-
-        lista.clear();
-
-
-
-        try{
+        ObservableList<Paciente> resultado =
+                FXCollections.observableArrayList();
 
 
-            int id =
-                    Integer.parseInt(texto);
+        for (Paciente p : pacienteDAO.listarTodos()) {
 
 
+            if (
+                    p.getNombre()
+                            .toLowerCase()
+                            .contains(texto)
 
-            Persona persona =
-                    personaDAO.buscarPorId(id);
+                            ||
+
+                            p.getApellido()
+                                    .toLowerCase()
+                                    .contains(texto)
+
+                            ||
+
+                            p.getCorreo()
+                                    .toLowerCase()
+                                    .contains(texto)
+
+            ) {
 
 
-
-            if(persona != null){
-
-                lista.add(persona);
+                resultado.add(p);
 
             }
-
-
-
-        }catch(NumberFormatException e){
-
-
-
-            List<Persona> resultado =
-                    personaDAO.buscar(texto);
-
-
-
-            lista.addAll(resultado);
 
 
         }
 
 
-
-        tablaDatos.setItems(lista);
-
+        tablaPacientes.setItems(resultado);
 
 
     }
 
 
+    @FXML
+    private void seleccionarPaciente(MouseEvent event) {
 
 
-
-
-    //==============================
-    // SELECCIONAR
-    //==============================
-
-
-    private void seleccionarUsuario(){
-
-
-        personaSeleccionada =
-
-                tablaDatos
+        pacienteSeleccionado =
+                tablaPacientes
                         .getSelectionModel()
                         .getSelectedItem();
 
@@ -364,43 +414,303 @@ public class AdministradorController {
     }
 
 
-
-
-
-
     //==============================
-    // NUEVO
+    // NUEVO PACIENTE
     //==============================
 
 
     @FXML
-    public void nuevo(){
+    private void nuevoPaciente(ActionEvent event) {
 
 
-        abrirRegistro(null);
+        TextInputDialog nombre =
+                new TextInputDialog();
+
+
+        nombre.setTitle("Nuevo paciente");
+
+        nombre.setHeaderText("Ingrese nombre");
+
+
+        Optional<String> n =
+                nombre.showAndWait();
+
+
+        if (n.isEmpty())
+            return;
+
+
+        TextInputDialog apellido =
+                new TextInputDialog();
+
+
+        apellido.setTitle("Nuevo paciente");
+
+        apellido.setHeaderText("Ingrese apellido");
+
+
+        Optional<String> a =
+                apellido.showAndWait();
+
+
+        if (a.isEmpty())
+            return;
+
+
+        TextInputDialog correo =
+                new TextInputDialog();
+
+
+        correo.setTitle("Nuevo paciente");
+
+        correo.setHeaderText("Ingrese correo");
+
+
+        Optional<String> c =
+                correo.showAndWait();
+
+
+        if (c.isEmpty())
+            return;
+
+
+        TextInputDialog telefono =
+                new TextInputDialog();
+
+
+        telefono.setTitle("Nuevo paciente");
+
+        telefono.setHeaderText("Ingrese teléfono");
+
+
+        Optional<String> t =
+                telefono.showAndWait();
+
+
+        if (t.isEmpty())
+            return;
+
+
+        Paciente paciente =
+                new Paciente(
+
+                        0,
+
+                        n.get(),
+
+                        a.get(),
+
+                        c.get(),
+
+                        "123456",
+
+                        "PACIENTE",
+
+                        t.get(),
+
+                        true,
+
+                        "Sin historial"
+
+                );
+
+
+        if (pacienteDAO.crear(paciente)) {
+
+
+            mostrarMensaje(
+                    "Paciente creado correctamente"
+            );
+
+
+            cargarPacientes();
+
+            cargarDatosInicio();
+
+
+        } else {
+
+
+            mostrarMensaje(
+                    "Error al crear paciente"
+            );
+
+
+        }
 
 
     }
 
 
-
-
-
-
     //==============================
-    // EDITAR
+    // EDITAR PACIENTE
     //==============================
 
 
     @FXML
-    public void editar(){
+    private void editarPaciente(ActionEvent event){
+
+        pacienteSeleccionado =
+                tablaPacientes.getSelectionModel().getSelectedItem();
 
 
-        if(personaSeleccionada == null){
+        if(pacienteSeleccionado == null){
+
+            mostrarMensaje(
+                    "Seleccione un paciente primero"
+            );
+
+            return;
+        }
 
 
-            alerta(
-                    "Seleccione un usuario para editar"
+        Dialog<Paciente> dialog = new Dialog<>();
+
+        dialog.setTitle("Editar paciente");
+
+
+        ButtonType guardar =
+                new ButtonType(
+                        "Guardar",
+                        ButtonBar.ButtonData.OK_DONE
+                );
+
+
+        dialog.getDialogPane()
+                .getButtonTypes()
+                .addAll(
+                        guardar,
+                        ButtonType.CANCEL
+                );
+
+
+
+        TextField nombre =
+                new TextField(
+                        pacienteSeleccionado.getNombre()
+                );
+
+
+        TextField apellido =
+                new TextField(
+                        pacienteSeleccionado.getApellido()
+                );
+
+
+        TextField correo =
+                new TextField(
+                        pacienteSeleccionado.getCorreo()
+                );
+
+
+        TextField telefono =
+                new TextField(
+                        pacienteSeleccionado.getTelefono()
+                );
+
+
+        VBox contenido =
+                new VBox(
+                        10,
+                        new Label("Nombre"),
+                        nombre,
+                        new Label("Apellido"),
+                        apellido,
+                        new Label("Correo"),
+                        correo,
+                        new Label("Teléfono"),
+                        telefono
+                );
+
+
+        contenido.setPadding(
+                new Insets(20)
+        );
+
+
+        dialog.getDialogPane()
+                .setContent(contenido);
+
+
+
+        dialog.setResultConverter(boton -> {
+
+
+            if(boton == guardar){
+
+
+                pacienteSeleccionado.setNombre(
+                        nombre.getText()
+                );
+
+
+                pacienteSeleccionado.setApellido(
+                        apellido.getText()
+                );
+
+
+                pacienteSeleccionado.setCorreo(
+                        correo.getText()
+                );
+
+
+                pacienteSeleccionado.setTelefono(
+                        telefono.getText()
+                );
+
+
+                return pacienteSeleccionado;
+
+            }
+
+
+            return null;
+
+        });
+
+
+
+        dialog.showAndWait()
+                .ifPresent(p -> {
+
+
+                    if(pacienteDAO.actualizar(p)){
+
+
+                        mostrarMensaje(
+                                "Paciente actualizado correctamente"
+                        );
+
+
+                        cargarPacientes();
+
+
+                    }else{
+
+
+                        mostrarMensaje(
+                                "Error al actualizar paciente"
+                        );
+
+
+                    }
+
+
+                });
+
+
+    }
+
+
+    @FXML
+    private void eliminarPaciente(ActionEvent event) {
+
+
+        if (pacienteSeleccionado == null) {
+
+
+            mostrarMensaje(
+                    "Seleccione un paciente"
             );
 
 
@@ -409,88 +719,312 @@ public class AdministradorController {
         }
 
 
+        Alert alerta =
+                new Alert(Alert.AlertType.CONFIRMATION);
 
-        abrirRegistro(
-                personaSeleccionada
+
+        alerta.setContentText(
+                "¿Eliminar paciente?"
         );
 
 
-    }
+        Optional<ButtonType> respuesta =
+                alerta.showAndWait();
 
 
+        if (respuesta.isPresent()
+                &&
+                respuesta.get() == ButtonType.OK) {
 
 
-
-    private void abrirRegistro(Persona persona){
-
-
-        try{
+            if (pacienteDAO.eliminar(
+                    pacienteSeleccionado.getId()
+            )) {
 
 
-            FXMLLoader loader =
-                    new FXMLLoader(
-
-                            getClass()
-                                    .getResource(
-                                            "/com/proyecto/sistema_citas_poli/registro.fxml"
-                                    )
-
-                    );
-
-
-
-            Parent root =
-                    loader.load();
-
-
-
-            RegistroController controller =
-                    loader.getController();
-
-
-
-            if(persona != null){
-
-
-                controller.cargarUsuario(
-                        persona
+                mostrarMensaje(
+                        "Paciente eliminado"
                 );
+
+
+                cargarPacientes();
+
+                cargarDatosInicio();
 
 
             }
 
 
+        }
 
 
-            Stage stage =
-                    new Stage();
+    }
 
 
+    @FXML
+    private void actualizarPacientes(ActionEvent event) {
 
-            stage.setTitle(
-                    "Registro Usuario"
+
+        cargarPacientes();
+
+
+        mostrarMensaje(
+                "Pacientes actualizados"
+        );
+
+
+    }
+    //==============================
+    // MEDICOS
+    //==============================
+
+
+    @FXML
+    private void mostrarMedicos(ActionEvent event) {
+
+
+        panelInicio.setVisible(false);
+
+        panelUsuarios.setVisible(false);
+
+        panelMedicos.setVisible(true);
+
+        panelCitas.setVisible(false);
+
+
+        cargarMedicos();
+
+
+    }
+
+
+    private void cargarMedicos() {
+
+
+        medicos =
+                FXCollections.observableArrayList(
+                        medicoDAO.leerTodos()
+                );
+
+
+        tablaMedicos.setItems(medicos);
+
+
+    }
+
+
+    @FXML
+    private void buscarMedico(ActionEvent event) {
+
+
+        String texto =
+                txtBuscarMedico.getText()
+                        .trim()
+                        .toLowerCase();
+
+
+        if (texto.isEmpty()) {
+
+
+            cargarMedicos();
+
+            return;
+
+        }
+
+
+        ObservableList<Medico> resultado =
+                FXCollections.observableArrayList();
+
+
+        for (Medico m : medicoDAO.leerTodos()) {
+
+
+            if (
+                    m.getNombre()
+                            .toLowerCase()
+                            .contains(texto)
+
+                            ||
+
+                            m.getApellido()
+                                    .toLowerCase()
+                                    .contains(texto)
+
+                            ||
+
+                            m.getEspecialidad()
+                                    .toLowerCase()
+                                    .contains(texto)
+
+            ) {
+
+
+                resultado.add(m);
+
+            }
+
+
+        }
+
+
+        tablaMedicos.setItems(resultado);
+
+
+    }
+
+
+    @FXML
+    private void seleccionarMedico(MouseEvent event) {
+
+
+        medicoSeleccionado =
+                tablaMedicos
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+    }
+
+
+    //==============================
+    // NUEVO MEDICO
+    //==============================
+
+
+    @FXML
+    private void nuevoMedico(ActionEvent event) {
+
+
+        TextInputDialog nombre =
+                new TextInputDialog();
+
+
+        nombre.setTitle("Nuevo médico");
+
+        nombre.setHeaderText("Nombre");
+
+
+        Optional<String> n =
+                nombre.showAndWait();
+
+
+        if (n.isEmpty())
+            return;
+
+
+        TextInputDialog apellido =
+                new TextInputDialog();
+
+
+        apellido.setTitle("Nuevo médico");
+
+        apellido.setHeaderText("Apellido");
+
+
+        Optional<String> a =
+                apellido.showAndWait();
+
+
+        if (a.isEmpty())
+            return;
+
+
+        TextInputDialog correo =
+                new TextInputDialog();
+
+
+        correo.setTitle("Nuevo médico");
+
+        correo.setHeaderText("Correo");
+
+
+        Optional<String> c =
+                correo.showAndWait();
+
+
+        if (c.isEmpty())
+            return;
+
+
+        TextInputDialog especialidad =
+                new TextInputDialog();
+
+
+        especialidad.setTitle("Nuevo médico");
+
+        especialidad.setHeaderText("Especialidad");
+
+
+        Optional<String> e =
+                especialidad.showAndWait();
+
+
+        if (e.isEmpty())
+            return;
+
+
+        TextInputDialog telefono =
+                new TextInputDialog();
+
+
+        telefono.setTitle("Nuevo médico");
+
+        telefono.setHeaderText("Teléfono");
+
+
+        Optional<String> t =
+                telefono.showAndWait();
+
+
+        if (t.isEmpty())
+            return;
+
+
+        Medico medico =
+                new Medico(
+
+                        0,
+
+                        n.get(),
+
+                        a.get(),
+
+                        c.get(),
+
+                        "123456",
+
+                        "MEDICO",
+
+                        t.get(),
+
+                        true,
+
+                        0,
+
+                        e.get()
+
+                );
+
+
+        if (medicoDAO.crear(medico)) {
+
+
+            mostrarMensaje(
+                    "Médico creado correctamente"
             );
 
 
+            cargarMedicos();
 
-            stage.setScene(
-                    new Scene(root)
-            );
-
+            cargarDatosInicio();
 
 
-            stage.show();
+        } else {
 
 
-
-        }catch(Exception e){
-
-
-            e.printStackTrace();
-
-
-            alerta(
-                    "Error abriendo registro"
+            mostrarMensaje(
+                    "Error creando médico"
             );
 
 
@@ -500,49 +1034,209 @@ public class AdministradorController {
     }
 
 
-
-
-
-
-
     //==============================
-    // ACTUALIZAR
+    // EDITAR MEDICO
     //==============================
-
 
     @FXML
-    public void actualizar(){
+    private void editarMedico(ActionEvent event){
 
 
-        cargarUsuarios();
+        medicoSeleccionado =
+                tablaMedicos.getSelectionModel()
+                        .getSelectedItem();
 
 
-        alerta(
-                "Tabla actualizada"
+
+        if(medicoSeleccionado == null){
+
+
+            mostrarMensaje(
+                    "Seleccione un médico primero"
+            );
+
+            return;
+
+        }
+
+
+
+        Dialog<Medico> dialog =
+                new Dialog<>();
+
+
+        dialog.setTitle(
+                "Editar médico"
         );
+
+
+        ButtonType guardar =
+                new ButtonType(
+                        "Guardar",
+                        ButtonBar.ButtonData.OK_DONE
+                );
+
+
+
+        dialog.getDialogPane()
+                .getButtonTypes()
+                .addAll(
+                        guardar,
+                        ButtonType.CANCEL
+                );
+
+
+
+
+        TextField nombre =
+                new TextField(
+                        medicoSeleccionado.getNombre()
+                );
+
+
+        TextField apellido =
+                new TextField(
+                        medicoSeleccionado.getApellido()
+                );
+
+
+        TextField correo =
+                new TextField(
+                        medicoSeleccionado.getCorreo()
+                );
+
+
+        TextField telefono =
+                new TextField(
+                        medicoSeleccionado.getTelefono()
+                );
+
+
+        TextField especialidad =
+                new TextField(
+                        medicoSeleccionado.getEspecialidad()
+                );
+
+
+
+
+        VBox contenido =
+                new VBox(
+                        10,
+
+                        new Label("Nombre"),
+                        nombre,
+
+                        new Label("Apellido"),
+                        apellido,
+
+                        new Label("Correo"),
+                        correo,
+
+                        new Label("Teléfono"),
+                        telefono,
+
+                        new Label("Especialidad"),
+                        especialidad
+                );
+
+
+        contenido.setPadding(
+                new Insets(20)
+        );
+
+
+
+        dialog.getDialogPane()
+                .setContent(contenido);
+
+
+
+
+        dialog.setResultConverter(boton -> {
+
+
+
+            if(boton == guardar){
+
+
+                medicoSeleccionado.setNombre(
+                        nombre.getText()
+                );
+
+
+                medicoSeleccionado.setApellido(
+                        apellido.getText()
+                );
+
+
+                medicoSeleccionado.setCorreo(
+                        correo.getText()
+                );
+
+
+                medicoSeleccionado.setTelefono(
+                        telefono.getText()
+                );
+
+
+                medicoSeleccionado.setEspecialidad(
+                        especialidad.getText()
+                );
+
+
+
+                return medicoSeleccionado;
+
+            }
+
+
+            return null;
+
+        });
+
+
+
+        dialog.showAndWait()
+                .ifPresent(m -> {
+
+
+                    if(medicoDAO.actualizar(m)){
+
+
+                        mostrarMensaje(
+                                "Médico actualizado correctamente"
+                        );
+
+
+                        cargarMedicos();
+
+
+                    }else{
+
+
+                        mostrarMensaje(
+                                "Error al actualizar médico"
+                        );
+
+
+                    }
+
+
+                });
 
 
     }
 
-
-
-
-
-
-    //==============================
-    // ELIMINAR
-    //==============================
-
-
     @FXML
-    public void eliminar(){
+    private void eliminarMedico(ActionEvent event) {
 
 
-        if(personaSeleccionada == null){
+        if (medicoSeleccionado == null) {
 
 
-            alerta(
-                    "Seleccione un usuario"
+            mostrarMensaje(
+                    "Seleccione un médico"
             );
 
 
@@ -551,177 +1245,178 @@ public class AdministradorController {
         }
 
 
+        if (medicoDAO.eliminar(
+                medicoSeleccionado.getMedicoId()
+        )) {
 
 
-        boolean eliminado =
+            mostrarMensaje(
+                    "Médico eliminado"
+            );
 
-                personaDAO.eliminar(
 
-                        personaSeleccionada.getId()
+            cargarMedicos();
 
+            cargarDatosInicio();
+
+
+        }
+
+
+    }
+
+
+    @FXML
+    private void actualizarMedicos(ActionEvent event) {
+
+
+        cargarMedicos();
+
+
+        mostrarMensaje(
+                "Médicos actualizados"
+        );
+
+
+    }
+
+
+    //==============================
+    // CITAS
+    //==============================
+
+
+    @FXML
+    private void mostrarCitas(ActionEvent event) {
+
+
+        panelInicio.setVisible(false);
+
+        panelUsuarios.setVisible(false);
+
+        panelMedicos.setVisible(false);
+
+        panelCitas.setVisible(true);
+
+
+        cargarCitas();
+
+
+    }
+
+
+    private void cargarCitas() {
+
+
+        citas =
+                FXCollections.observableArrayList(
+                        citaDAO.listarTodas()
                 );
 
 
-
-        if(eliminado){
-
-
-            alerta(
-                    "Usuario eliminado correctamente"
-            );
-
-
-            cargarUsuarios();
-
-
-
-        }else{
-
-
-            alerta(
-                    "No se pudo eliminar"
-            );
-
-
-        }
+        tablaCitas.setItems(citas);
 
 
     }
 
 
-
-
-
     //==============================
-    // FILTROS
+    // CONFIGURAR TABLAS
     //==============================
 
 
-    @FXML
-    public void mostrarMedicos(){
+    private void configurarTablaPacientes() {
 
 
-        lista.clear();
+        colPacienteId.setCellValueFactory(
+                data ->
+                        new SimpleIntegerProperty(
+                                data.getValue().getId()
+                        ).asObject()
+        );
 
 
-
-        for(Persona p:
-                personaDAO.listarTodos()){
-
-
-            if(p.getRol()
-                    .equalsIgnoreCase("MEDICO")){
-
-
-                lista.add(p);
+        colPacienteNombre.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getNombre()
+                        )
+        );
 
 
-            }
+        colPacienteApellido.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getApellido()
+                        )
+        );
 
 
-        }
+        colPacienteCorreo.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getCorreo()
+                        )
+        );
 
 
-        tablaDatos.setItems(lista);
-
-
-        lblTitulo.setText(
-                "Médicos"
+        colPacienteTelefono.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getTelefono()
+                        )
         );
 
 
     }
+    private void configurarTablaMedicos(){
 
 
-
-
-
-    @FXML
-    public void mostrarPacientes(){
-
-
-        lista.clear();
-
-
-
-        for(Persona p:
-                personaDAO.listarTodos()){
-
-
-            if(p.getRol()
-                    .equalsIgnoreCase("PACIENTE")){
-
-
-                lista.add(p);
-
-
-            }
-
-
-        }
-
-
-        tablaDatos.setItems(lista);
-
-
-        lblTitulo.setText(
-                "Pacientes"
+        colMedicoId.setCellValueFactory(
+                data ->
+                        new SimpleIntegerProperty(
+                                data.getValue().getId()
+                        ).asObject()
         );
 
 
-    }
-    @FXML
-    public void mostrarCitas(ActionEvent event){
-
-        try{
-
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/com/proyecto/sistema_citas_poli/cita.fxml"
-                    )
-            );
+        colMedicoNombre.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getNombre()
+                        )
+        );
 
 
-            Scene scene = new Scene(loader.load());
+        colMedicoApellido.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getApellido()
+                        )
+        );
 
 
-            Stage stage = (Stage)
-                    ((Node) event.getSource())
-                            .getScene()
-                            .getWindow();
+        colMedicoEspecialidad.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getEspecialidad()
+                        )
+        );
 
 
-            stage.setScene(scene);
-            stage.show();
+        colMedicoCorreo.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getCorreo()
+                        )
+        );
 
 
-        }catch(Exception e){
-
-            e.printStackTrace();
-
-            alerta(
-                    "No se pudo abrir el módulo de citas"
-            );
-
-        }
-
-    }
-
-
-    //==============================
-    // SESION
-    //==============================
-
-
-    @FXML
-    public void cerrarSesion(){
-
-
-        Sesion.cerrarSesion();
-
-
-        alerta(
-                "Sesión cerrada"
+        colMedicoTelefono.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getTelefono()
+                        )
         );
 
 
@@ -732,27 +1427,142 @@ public class AdministradorController {
 
 
 
-    private void alerta(String mensaje){
+
+    private void configurarTablaCitas(){
 
 
-        Alert alert =
+
+        colCitaId.setCellValueFactory(
+                data ->
+                        new SimpleIntegerProperty(
+                                data.getValue().getId()
+                        ).asObject()
+        );
+
+
+
+        colCitaPaciente.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getPaciente()
+                        )
+        );
+
+
+
+        colCitaMedico.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getMedico()
+                        )
+        );
+
+
+
+        colCitaEspecialidad.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getEspecialidad()
+                        )
+        );
+
+
+
+        colCitaFecha.setCellValueFactory(
+                data ->
+                        new SimpleObjectProperty<>(
+                                data.getValue().getFecha()
+                        )
+        );
+
+
+
+        colCitaHora.setCellValueFactory(
+                data ->
+                        new SimpleObjectProperty<>(
+                                data.getValue().getHora()
+                        )
+        );
+
+
+
+        colCitaEstado.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getEstado()
+                        )
+        );
+
+
+
+        colCitaObservacion.setCellValueFactory(
+                data ->
+                        new SimpleStringProperty(
+                                data.getValue().getObservacion()
+                        )
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+    //==============================
+    // CERRAR SESION
+    //==============================
+
+
+    @FXML
+    private void cerrarSesion(ActionEvent event){
+
+
+        mostrarMensaje(
+                "Sesión cerrada correctamente"
+        );
+
+
+    }
+
+
+
+
+
+
+
+
+    //==============================
+    // MENSAJES
+    //==============================
+
+
+    private void mostrarMensaje(String mensaje){
+
+
+        Alert alerta =
                 new Alert(
                         Alert.AlertType.INFORMATION
                 );
 
 
-        alert.setTitle(
+        alerta.setTitle(
                 "MediCitas POLI"
         );
 
 
-        alert.setHeaderText(null);
+        alerta.setHeaderText(null);
 
 
-        alert.setContentText(mensaje);
+        alerta.setContentText(
+                mensaje
+        );
 
 
-        alert.showAndWait();
+        alerta.showAndWait();
 
 
     }

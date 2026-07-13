@@ -4,213 +4,627 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+
 <BorderPane
+
         xmlns="http://javafx.com/javafx/21"
         xmlns:fx="http://javafx.com/fxml/1"
+
         fx:controller="com.proyecto.sistema_citas_poli.Controller.AdministradorController"
+
         stylesheets="@Styles.css"
+
         prefWidth="1200"
         prefHeight="700">
 
+
+
     <!-- ================= CABECERA ================= -->
 
+
     <top>
+
 
         <HBox alignment="CENTER_LEFT"
               spacing="15"
               styleClass="panelInformacion">
 
+
             <padding>
-                <Insets top="15" right="20" bottom="15" left="20"/>
+                <Insets top="15"
+                        right="20"
+                        bottom="15"
+                        left="20"/>
             </padding>
 
-            <Label
-                    text="🏥 MediCitas POLI"
-                    styleClass="tituloPrincipal"/>
+
+
+            <Label text="🏥 MediCitas POLI"
+                   styleClass="tituloPrincipal"/>
+
+
 
             <Pane HBox.hgrow="ALWAYS"/>
 
-            <Label
-                    fx:id="lblAdministrador"
-                    text="Administrador"
-                    styleClass="textoInfo"/>
+
+
+            <Label fx:id="lblAdministrador"
+                   text="Administrador"
+                   styleClass="textoInfo"/>
+
 
         </HBox>
 
+
     </top>
 
-    <!-- ================= MENÚ ================= -->
+
+
+
+
+    <!-- ================= MENU LATERAL ================= -->
+
 
     <left>
+
 
         <VBox spacing="12"
               prefWidth="220"
               styleClass="panelInformacion">
 
+
             <padding>
+
                 <Insets top="20"
                         right="15"
                         bottom="20"
                         left="15"/>
+
             </padding>
 
-            <Button
-                    fx:id="btnInicio"
-                    text="🏠 Inicio"
+
+
+
+            <Button text="🏠 Inicio"
                     onAction="#mostrarInicio"
                     maxWidth="Infinity"
                     styleClass="botonPrincipal"/>
 
-            <Button
-                    fx:id="btnUsuarios"
-                    text="👥 Usuarios"
+
+
+
+            <Button text="👥 Pacientes"
                     onAction="#mostrarUsuarios"
                     maxWidth="Infinity"
                     styleClass="botonPrincipal"/>
 
-            <Button
-                    fx:id="btnMedicos"
-                    text="👨‍⚕️ Médicos"
+
+
+
+            <Button text="👨‍⚕️ Médicos"
                     onAction="#mostrarMedicos"
                     maxWidth="Infinity"
                     styleClass="botonPrincipal"/>
 
-            <Button
-                    fx:id="btnPacientes"
-                    text="🧑 Pacientes"
-                    onAction="#mostrarPacientes"
-                    maxWidth="Infinity"
-                    styleClass="botonPrincipal"/>
 
-            <Button
-                    fx:id="btnCitas"
-                    text="📅 Citas"
+
+
+            <Button text="📅 Citas"
                     onAction="#mostrarCitas"
                     maxWidth="Infinity"
                     styleClass="botonPrincipal"/>
 
+
+
             <Region VBox.vgrow="ALWAYS"/>
 
-            <Button
-                    fx:id="btnCerrarSesion"
-                    text="🚪 Cerrar sesión"
+
+
+
+            <Button text="🚪 Cerrar sesión"
                     onAction="#cerrarSesion"
                     maxWidth="Infinity"
                     styleClass="botonSecundario"/>
 
+
         </VBox>
+
 
     </left>
 
+
+
+
+
+
     <!-- ================= CONTENIDO ================= -->
+
 
     <center>
 
-        <VBox spacing="15">
 
-            <padding>
-                <Insets top="20"
-                        right="20"
-                        bottom="20"
-                        left="20"/>
-            </padding>
+        <StackPane fx:id="contenedorPrincipal">
 
-            <Label
-                    fx:id="lblTitulo"
-                    text="Panel de Administración"
-                    styleClass="tituloLogin"/>
 
-            <HBox spacing="10">
 
-                <TextField
-                        fx:id="txtBuscar"
-                        promptText="🔍 Buscar por nombre, apellido, correo o rol..."
-                        HBox.hgrow="ALWAYS"
-                        styleClass="campo"/>
 
-                <Button
-                        fx:id="btnBuscar"
-                        text="Buscar"
-                        onAction="#buscar"
-                        styleClass="botonPrincipal"/>
 
-            </HBox>
+            <!-- ================= INICIO ================= -->
 
-            <TableView
-                    fx:id="tablaDatos"
-                    VBox.vgrow="ALWAYS">
 
-                <columns>
+            <VBox fx:id="panelInicio"
 
-                    <TableColumn
-                            fx:id="colId"
-                            text="ID"
-                            prefWidth="60"/>
+                  spacing="20"
 
-                    <TableColumn
-                            fx:id="colNombre"
-                            text="Nombre"
-                            prefWidth="130"/>
+                  alignment="CENTER">
 
-                    <TableColumn
-                            fx:id="colApellido"
-                            text="Apellido"
-                            prefWidth="130"/>
 
-                    <TableColumn
-                            fx:id="colCorreo"
-                            text="Correo"
-                            prefWidth="230"/>
+                <Label text="Panel Administrativo"
+                       styleClass="tituloLogin"/>
 
-                    <TableColumn
-                            fx:id="colRol"
-                            text="Rol"
-                            prefWidth="120"/>
 
-                    <TableColumn
-                            fx:id="colTelefono"
-                            text="Teléfono"
-                            prefWidth="140"/>
 
-                    <TableColumn
-                            fx:id="colEstado"
-                            text="Estado"
-                            prefWidth="100"/>
+                <Label text="🏥 Bienvenido al sistema MediCitas POLI"
+                       styleClass="textoInfo"/>
 
-                </columns>
 
-            </TableView>
 
-            <HBox alignment="CENTER"
+                <Label
+
+                        text="Funciones del administrador:
+
+• Gestionar pacientes registrados
+
+• Administrar médicos
+
+• Supervisar citas médicas
+
+• Mantener actualizada la información del sistema"
+
+                        wrapText="true"
+
+                        styleClass="textoInfo"/>
+
+
+
+
+                <HBox spacing="25">
+
+
+                    <Label fx:id="lblTotalPacientes"
+                           text="Pacientes: 0"
+                           styleClass="textoInfo"/>
+
+
+
+                    <Label fx:id="lblTotalMedicos"
+                           text="Médicos: 0"
+                           styleClass="textoInfo"/>
+
+
+
+                    <Label fx:id="lblTotalCitas"
+                           text="Citas: 0"
+                           styleClass="textoInfo"/>
+
+
+                </HBox>
+
+
+            </VBox>
+
+
+
+
+
+
+
+            <!-- ================= PACIENTES ================= -->
+
+
+            <VBox fx:id="panelUsuarios"
+
+                  visible="false"
+
                   spacing="15">
 
-                <Button
-                        fx:id="btnNuevo"
-                        text="➕ Nuevo"
-                        onAction="#nuevo"
-                        styleClass="botonPrincipal"/>
 
-                <Button
-                        fx:id="btnEditar"
-                        text="✏ Editar"
-                        onAction="#editar"
-                        styleClass="botonPrincipal"/>
+                <Label text="👥 Gestión de Pacientes"
+                       styleClass="tituloLogin"/>
 
-                <Button
-                        fx:id="btnEliminar"
-                        text="🗑 Eliminar"
-                        onAction="#eliminar"
-                        styleClass="botonSecundario"/>
-                <Button
-                        fx:id="btnActualizar"
-                        text="🔄 Actualizar"
-                        onAction="#actualizar"
-                        styleClass="botonPrincipal"/>
 
-            </HBox>
 
-        </VBox>
+                <HBox spacing="10">
+
+
+                    <TextField fx:id="txtBuscarPaciente"
+
+                               promptText="🔍 Buscar paciente..."
+
+                               HBox.hgrow="ALWAYS"
+
+                               styleClass="campo"/>
+
+
+
+                    <Button text="Buscar"
+
+                            onAction="#buscarPaciente"
+
+                            styleClass="botonPrincipal"/>
+
+
+                </HBox>
+
+
+
+
+
+                <TableView fx:id="tablaPacientes"
+                           VBox.vgrow="ALWAYS">
+
+
+                    <columns>
+
+
+                        <TableColumn fx:id="colPacienteId"
+                                     text="ID"
+                                     prefWidth="60"/>
+
+
+                        <TableColumn fx:id="colPacienteNombre"
+                                     text="Nombre"
+                                     prefWidth="150"/>
+
+
+                        <TableColumn fx:id="colPacienteApellido"
+                                     text="Apellido"
+                                     prefWidth="150"/>
+
+
+                        <TableColumn fx:id="colPacienteCorreo"
+                                     text="Correo"
+                                     prefWidth="250"/>
+
+
+                        <TableColumn fx:id="colPacienteTelefono"
+                                     text="Teléfono"
+                                     prefWidth="150"/>
+
+
+                    </columns>
+
+
+                </TableView>
+
+
+
+
+                <HBox alignment="CENTER"
+                      spacing="15">
+
+
+                    <Button text="➕ Nuevo"
+
+                            onAction="#nuevoPaciente"
+
+                            styleClass="botonPrincipal"/>
+
+
+
+                    <Button text="✏ Editar"
+
+                            onAction="#editarPaciente"
+
+                            styleClass="botonPrincipal"/>
+
+
+
+                    <Button text="🗑 Eliminar"
+
+                            onAction="#eliminarPaciente"
+
+                            styleClass="botonSecundario"/>
+
+
+
+                    <Button text="🔄 Actualizar"
+
+                            onAction="#actualizarPacientes"
+
+                            styleClass="botonPrincipal"/>
+
+
+                </HBox>
+
+
+            </VBox>
+
+
+
+
+            <!-- ================= MEDICOS ================= -->
+
+
+            <VBox fx:id="panelMedicos"
+
+                  visible="false"
+
+                  spacing="15">
+
+
+
+                <Label text="👨‍⚕️ Gestión de Médicos"
+
+                       styleClass="tituloLogin"/>
+
+
+
+
+                <HBox spacing="10">
+
+
+
+                    <TextField fx:id="txtBuscarMedico"
+
+                               promptText="🔍 Buscar médico o especialidad..."
+
+                               HBox.hgrow="ALWAYS"
+
+                               styleClass="campo"/>
+
+
+
+                    <Button text="Buscar"
+
+                            onAction="#buscarMedico"
+
+                            styleClass="botonPrincipal"/>
+
+
+                </HBox>
+
+
+
+
+
+
+                <TableView fx:id="tablaMedicos"
+
+                           VBox.vgrow="ALWAYS">
+
+
+
+                    <columns>
+
+
+
+                        <TableColumn fx:id="colMedicoId"
+
+                                     text="ID"
+
+                                     prefWidth="60"/>
+
+
+
+                        <TableColumn fx:id="colMedicoNombre"
+
+                                     text="Nombre"
+
+                                     prefWidth="140"/>
+
+
+
+                        <TableColumn fx:id="colMedicoApellido"
+
+                                     text="Apellido"
+
+                                     prefWidth="140"/>
+
+
+
+                        <TableColumn fx:id="colMedicoEspecialidad"
+
+                                     text="Especialidad"
+
+                                     prefWidth="180"/>
+
+
+
+                        <TableColumn fx:id="colMedicoCorreo"
+
+                                     text="Correo"
+
+                                     prefWidth="230"/>
+
+
+
+                        <TableColumn fx:id="colMedicoTelefono"
+
+                                     text="Teléfono"
+
+                                     prefWidth="140"/>
+
+
+
+                    </columns>
+
+
+                </TableView>
+
+
+
+
+
+
+                <HBox alignment="CENTER"
+
+                      spacing="15">
+
+
+
+                    <Button text="➕ Nuevo médico"
+
+                            onAction="#nuevoMedico"
+
+                            styleClass="botonPrincipal"/>
+
+
+
+                    <Button text="✏ Editar"
+
+                            onAction="#editarMedico"
+
+                            styleClass="botonPrincipal"/>
+
+
+
+                    <Button text="🗑 Eliminar"
+
+                            onAction="#eliminarMedico"
+
+                            styleClass="botonSecundario"/>
+
+
+
+                    <Button text="🔄 Actualizar"
+
+                            onAction="#actualizarMedicos"
+
+                            styleClass="botonPrincipal"/>
+
+
+                </HBox>
+
+
+
+            </VBox>
+
+
+
+
+
+
+
+
+
+
+            <!-- ================= CITAS ================= -->
+
+
+            <VBox fx:id="panelCitas"
+
+                  visible="false"
+
+                  spacing="15">
+
+
+
+                <Label text="📅 Citas Agendadas"
+
+                       styleClass="tituloLogin"/>
+
+
+
+
+
+
+                <TableView fx:id="tablaCitas"
+
+                           VBox.vgrow="ALWAYS">
+
+
+
+                    <columns>
+
+
+
+                        <TableColumn fx:id="colCitaId"
+
+                                     text="ID"
+
+                                     prefWidth="60"/>
+
+
+
+                        <TableColumn fx:id="colCitaPaciente"
+
+                                     text="Paciente"
+
+                                     prefWidth="180"/>
+
+
+
+                        <TableColumn fx:id="colCitaMedico"
+
+                                     text="Médico"
+
+                                     prefWidth="180"/>
+
+
+
+                        <TableColumn fx:id="colCitaEspecialidad"
+
+                                     text="Especialidad"
+
+                                     prefWidth="150"/>
+
+
+
+                        <TableColumn fx:id="colCitaFecha"
+
+                                     text="Fecha"
+
+                                     prefWidth="120"/>
+
+
+
+                        <TableColumn fx:id="colCitaHora"
+
+                                     text="Hora"
+
+                                     prefWidth="100"/>
+
+
+
+                        <TableColumn fx:id="colCitaEstado"
+
+                                     text="Estado"
+
+                                     prefWidth="120"/>
+
+
+
+                        <TableColumn fx:id="colCitaObservacion"
+
+                                     text="Observación"
+
+                                     prefWidth="200"/>
+
+
+
+                    </columns>
+
+
+                </TableView>
+
+
+
+
+
+            </VBox>
+
+
+
+
+        </StackPane>
+
+
 
     </center>
+
+
+
+
 
 </BorderPane>
