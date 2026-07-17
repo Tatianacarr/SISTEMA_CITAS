@@ -4,6 +4,7 @@ package com.proyecto.sistema_citas_poli.Controller;
 import com.proyecto.sistema_citas_poli.DAO.*;
 import com.proyecto.sistema_citas_poli.Model.*;
 
+import com.proyecto.sistema_citas_poli.Util.Sesion;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,10 +15,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -1518,15 +1522,78 @@ public class AdministradorController {
 
 
     @FXML
-    private void cerrarSesion(ActionEvent event){
+    public void cerrarSesion(){
 
 
-        mostrarMensaje(
-                "Sesión cerrada correctamente"
-        );
+
+        Sesion.cerrarSesion();
+
+
+
+        try{
+
+
+            FXMLLoader loader =
+
+                    new FXMLLoader(
+
+                            getClass()
+                                    .getResource(
+
+                                            "/com/proyecto/sistema_citas_poli/login.fxml"
+
+                                    )
+
+                    );
+
+
+
+            Scene scene =
+
+                    new Scene(
+
+                            loader.load()
+
+                    );
+
+
+
+            Stage stage =
+
+                    (Stage)
+
+                            tablaCitas
+                                    .getScene()
+                                    .getWindow();
+
+
+
+            stage.setScene(scene);
+
+
+
+            stage.setTitle(
+                    "Inicio de sesión"
+            );
+
+
+
+        }catch(Exception e){
+
+
+            e.printStackTrace();
+
+
+        }
+
 
 
     }
+
+
+
+
+
 
 
 
