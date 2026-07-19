@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane
+
+        prefWidth="900"
+        prefHeight="650"
+
+        styleClass="fondoLogin"
+        stylesheets="@Styles.css"
+
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+
+        fx:controller="com.proyecto.sistema_citas_poli.Controller.CitaController">
+
+
+    <VBox
+
+            alignment="CENTER"
+            spacing="20"
+
+            AnchorPane.topAnchor="0"
+            AnchorPane.bottomAnchor="0"
+            AnchorPane.leftAnchor="0"
+            AnchorPane.rightAnchor="0">
+
+
+        <VBox
+
+                fx:id="formularioCita"
+
+                alignment="CENTER"
+                spacing="15"
+
+                styleClass="tarjetaLogin">
+
+
+            <padding>
+
+                <Insets
+                        top="35"
+                        bottom="35"
+                        left="45"
+                        right="45"/>
+
+            </padding>
+
+
+            <Label
+
+                    text="📅 Agendar cita"
+
+                    styleClass="tituloLogin"/>
+
+
+            <Label
+
+                    text="Complete los datos de la cita"
+
+                    styleClass="subtitulo"/>
+
+
+
+            <ComboBox
+
+                    fx:id="cbEspecialidad"
+
+                    promptText="🩺 Especialidad"
+
+                    prefWidth="280"
+
+                    styleClass="campo"/>
+
+
+
+            <ComboBox
+
+                    fx:id="cbMedico"
+
+                    promptText="👨‍⚕️ Médico"
+
+                    prefWidth="280"
+
+                    styleClass="campo"/>
+
+
+
+            <DatePicker
+
+                    fx:id="fecha"
+
+                    promptText="📅 Fecha"
+
+                    prefWidth="280"
+
+                    styleClass="campo"/>
+
+
+
+            <ComboBox
+
+                    fx:id="cbHora"
+
+                    promptText="⏰ Hora"
+
+                    prefWidth="280"
+
+                    styleClass="campo"/>
+
+
+
+            <TextArea
+
+                    fx:id="txtDescripcion"
+
+                    promptText="Descripción del motivo de consulta"
+
+                    prefWidth="280"
+
+                    prefHeight="80"
+
+                    styleClass="campo"/>
+
+
+
+            <Button
+
+                    text="✅ Guardar cita"
+
+                    prefWidth="280"
+
+                    prefHeight="45"
+
+                    onAction="#guardarCita"
+
+                    styleClass="botonPrincipal"/>
+
+
+
+        </VBox>
+
+
+
+        <TableView
+
+                fx:id="tablaCitas"
+
+                prefWidth="750"
+
+                prefHeight="300">
+
+
+            <columns>
+
+
+                <TableColumn
+
+                        fx:id="colMedico"
+
+                        text="Médico"
+
+                        prefWidth="180"/>
+
+
+                <TableColumn
+
+                        fx:id="colEspecialidad"
+
+                        text="Especialidad"
+
+                        prefWidth="150"/>
+
+
+                <TableColumn
+
+                        fx:id="colFecha"
+
+                        text="Fecha"
+
+                        prefWidth="120"/>
+
+
+                <TableColumn
+
+                        fx:id="colHora"
+
+                        text="Hora"
+
+                        prefWidth="100"/>
+
+
+                <TableColumn
+
+                        fx:id="colEstado"
+
+                        text="Estado"
+
+                        prefWidth="120"/>
+
+
+            </columns>
+
+
+        </TableView>
+
+
+
+        <Button
+
+                text="⬅ Volver"
+
+                prefWidth="280"
+
+                prefHeight="40"
+
+                onAction="#volver"
+
+                styleClass="botonSecundario"/>
+
+
+
+    </VBox>
+
+
+</AnchorPane>

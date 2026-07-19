@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane
+        prefHeight="700"
+        prefWidth="900"
+        styleClass="fondoLogin"
+        stylesheets="@Styles.css"
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.proyecto.sistema_citas_poli.Controller.RegistroController">
+
+
+    <children>
+
+
+        <VBox
+                alignment="CENTER"
+                spacing="15"
+                AnchorPane.topAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0"
+                AnchorPane.rightAnchor="0">
+
+
+
+            <VBox
+                    alignment="CENTER"
+                    spacing="15"
+                    styleClass="tarjetaLogin">
+
+
+                <padding>
+
+                    <Insets
+                            top="35"
+                            bottom="35"
+                            left="45"
+                            right="45"/>
+
+                </padding>
+
+
+
+
+                <Label
+                        text="🌸 Crear cuenta"
+                        styleClass="tituloLogin"/>
+
+
+
+                <Label
+                        text="Regístrate en MediCitas POLI"
+                        styleClass="subtitulo"/>
+
+
+
+
+
+
+                <TextField
+                        fx:id="txtNombre"
+                        promptText="👤 Nombre"
+                        styleClass="campo"/>
+
+
+
+
+
+                <TextField
+                        fx:id="txtApellido"
+                        promptText="👤 Apellido"
+                        styleClass="campo"/>
+
+
+
+
+
+
+                <TextField
+                        fx:id="txtCorreo"
+                        promptText="📧 Correo electrónico"
+                        styleClass="campo"/>
+
+
+
+
+
+
+
+                <TextField
+                        fx:id="txtTelefono"
+                        promptText="📱 Teléfono"
+                        styleClass="campo"/>
+
+
+
+
+
+
+
+                <PasswordField
+                        fx:id="txtContrasena"
+                        promptText="🔒 Contraseña"
+                        styleClass="campo"/>
+
+
+
+
+
+
+
+                <PasswordField
+                        fx:id="txtConfirmar"
+                        promptText="🔒 Confirmar contraseña"
+                        styleClass="campo"/>
+
+
+
+
+
+
+
+                <ComboBox
+                        fx:id="cbRol"
+                        prefWidth="260"
+                        promptText="Seleccione su rol"
+                        styleClass="campo"/>
+
+
+
+
+
+
+
+                <!-- SOLO PARA MÉDICOS -->
+
+                <TextField
+                        fx:id="txtEspecialidad"
+                        promptText="🩺 Especialidad médica"
+                        styleClass="campo"
+                        visible="false"
+                        managed="false"/>
+
+                <Button
+                        fx:id="btnRegistrar"
+                        text="✨ Registrarme"
+                        prefWidth="260"
+                        prefHeight="45"
+                        onAction="#registrar"
+                        styleClass="botonPrincipal"/>
+
+
+
+
+
+
+
+                <Button
+                        fx:id="btnVolver"
+                        text="⬅ Volver al Login"
+                        prefWidth="260"
+                        prefHeight="40"
+                        onAction="#volverLogin"
+                        styleClass="botonSecundario"/>
+
+
+
+
+
+
+            </VBox>
+
+
+
+        </VBox>
+
+
+
+    </children>
+
+
+
+</AnchorPane>
