@@ -1,43 +1,29 @@
 package com.proyecto.sistema_citas_poli.BaseDatos;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-
-
 public class Conexion {
 
-
     private static final String URL =
-            "jdbc:postgresql://localhost:5432/Proyecto_sistema";
-
+            "jdbc:postgresql://aws-0-ca-central-1.pooler.supabase.com:5432/postgres";
 
     private static final String USER =
-            "postgres";
-
+            "postgres.btqwqnqjrkrkwjadyurx";
 
     private static final String PASSWORD =
-            "123456";
+            "Politecnica26";
 
-
-
-
-    public static Connection getConexion(){
-
+    public static Connection getConexion() {
 
         Connection cn = null;
 
-
-        try{
-
+        try {
 
             Class.forName(
                     "org.postgresql.Driver"
             );
-
-
 
             cn = DriverManager.getConnection(
                     URL,
@@ -45,40 +31,27 @@ public class Conexion {
                     PASSWORD
             );
 
-
-
             System.out.println(
-                    "Conexion exitosa"
+                    "Conexion exitosa con Supabase"
             );
 
-
-
-        }catch(ClassNotFoundException e){
-
+        } catch (ClassNotFoundException e) {
 
             System.out.println(
                     "No se encontro el driver PostgreSQL"
             );
 
+            e.printStackTrace();
 
-        }catch(SQLException e){
-
+        } catch (SQLException e) {
 
             System.out.println(
-                    "Error conexion: "
-                            +e.getMessage()
+                    "Error de conexion:"
             );
 
-
+            e.printStackTrace();
         }
 
-
-
         return cn;
-
-
     }
-
-
-
 }
